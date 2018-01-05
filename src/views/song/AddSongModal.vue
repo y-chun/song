@@ -1,6 +1,6 @@
 <template>
 <div class="modal">
-    <el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible">
+    <el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
             <el-form-item label="活动名称" prop="name">
                 <el-input v-model="ruleForm.name"></el-input>
@@ -52,7 +52,7 @@ export default {
   },
   data() {
     return {
-        value9:[],
+      value9:[],
       fileList: [],
       ruleForm: {
         name: ""
@@ -115,31 +115,13 @@ export default {
     songDialogSure() {},
     dialogFormVisible() {
       console.log(111);
-      this.$emit("changeNewSongModalState", false);
+      this.$emit("changeAddSongModalState", false);
     }
   }
 };
 </script>
 
 <style scoped>
-.line {
-  text-align: center;
-}
-.app-table-box {
-  border: 1px solid #ddd;
-  background-color: #fff;
-}
-.app-content {
-  background-color: #fff;
-  padding: 15px;
-  box-shadow: 0 0 4px #aaa;
-}
-.over-table-btn {
-  margin: 10px;
-  float: right;
-}
-.over-table {
-  overflow: hidden;
-}
+
 </style>
 

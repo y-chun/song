@@ -1,17 +1,18 @@
 <template>
-<div class="modal">
-    <el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible">
-        <slot></slot>
-        <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible">取 消</el-button>
-            <el-button type="primary" @click="songDialogSure">确 定</el-button>
-        </div>
-    </el-dialog>
-</div>
+  <div class="modal">
+      <el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible">
+          <slot></slot>
+          <div slot="footer" class="dialog-footer">
+              <el-button @click="dialogFormVisible">取 消</el-button>
+              <el-button type="primary" @click="songDialogSure">确 定</el-button>
+          </div>
+      </el-dialog>
+  </div>
 </template>
 
 <script>
 export default {
+  name:"InfoModal",
   props: {
       value: {
     	type: Boolean,
