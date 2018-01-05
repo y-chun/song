@@ -68,7 +68,26 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/song',
+    component: Layout,
+    name: 'Song',
+    meta: { title: 'Song', icon: 'example' },
+    children: [
+      {
+        path: 'song',
+        name: 'Song',
+        component: _import('song/index'),
+        meta: { title: 'Song', icon: 'form' }
+      },
+      {
+        path: 'product',
+        name: 'product',
+        component: _import('product/index'),
+        meta: { title: 'product', icon: 'form' }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 

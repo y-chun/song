@@ -9,6 +9,7 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  background: #efefef;
 }
 
 html {
@@ -56,4 +57,14 @@ a:hover {
 
 .app-container {
   padding: 20px;
+}
+
+.el-dialog{
+  border-radius: 5px;
+}
+.el-dialog__header{
+  border-bottom: 1px solid #eeeeee;
+}
+.el-dialog__footer{
+  border-top: 1px solid #eeeeee;
 }
