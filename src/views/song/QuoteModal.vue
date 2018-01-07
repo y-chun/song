@@ -17,13 +17,14 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible">取 消</el-button>
-				<el-button type="primary" @click="songDialogSure">确 定</el-button>
+				<el-button type="primary" @click="DialogSure" :loading = "loading">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+import {quoteSong} from '@/api/song/song';
 	export default {
 		props: {
 			value: {
@@ -45,6 +46,7 @@
 		},
 		data() {
 			return {
+				loading:false,
 				value9: [],
 				fileList: [],
 				ruleForm: {
@@ -106,9 +108,16 @@
 			beforeRemove(file, fileList) {
 				return this.$confirm(`确定移除 ${file.name}？`);
 			},
-			songDialogSure() {},
+			DialogSure() {
+				this.loading = true;
+				quoteSong().then(res=>{
+					this.loading = false;
+					this.dialogFormVisible();
+				}).catch(res=>{
+					this.loading = false;
+				})
+			},
 			dialogFormVisible() {
-				console.log(111);
 				this.$emit("changeQuoteModalState", false);
 			}
 		}

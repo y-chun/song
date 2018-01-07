@@ -34,7 +34,7 @@
               <el-button type="primary" size="mini" @click="openQuoteModal()">引用</el-button>
               <el-button type="primary" size="mini" >编辑</el-button>
               <el-button type="primary" size="mini" @click="viewNote(scope.row.ID)">查看备注</el-button>
-              <el-button type="primary" size="mini" >删除</el-button>
+              <el-button type="primary" size="mini" @click="deleteSongFun(scope.row.ID)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -68,7 +68,7 @@ import AddSongModal  from './AddSongModal';
 import LabelManage from './LabelManage';
 import QuoteModal from './QuoteModal';
 import InfoModal from '@/components/InfoModal';
-import {getList,getNote} from '@/api/song/song'
+import {getList,getNote,deleteSong} from '@/api/song/song';
 export default {
   components: {
     AddSongModal,
@@ -141,6 +141,15 @@ export default {
       console.log(`当前页: ${val}`);
     },
 
+    /**
+     * 删除列表数据
+     */
+    deleteSongFun(){
+      deleteSong().then(res=>{
+
+      })
+    },
+    
     /**
      * 打开引用窗口
      */

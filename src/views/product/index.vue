@@ -21,9 +21,9 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作" width="237">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" >编辑</el-button>
-              <el-button type="primary" size="mini" @click="checkNote(scope.row)">查看备注</el-button>
-              <el-button type="primary" size="mini" >删除</el-button>
+              <el-button type="primary" size="mini" @click="addProductModalState=true">编辑</el-button>
+              <el-button type="primary" size="mini" @click="viewNote(scope.row.ID)">查看备注</el-button>
+              <el-button type="primary" size="mini" @click="deleteProductFun(scope.row.ID)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -41,7 +41,9 @@
         </el-pagination>
       </div>
     </div>
-    <InfoModal v-model="infoModalState" @changeInfoState="changeInfoState"/>
+    <InfoModal v-model="infoModalState" @changeInfoState="changeInfoState">
+      <p>{{note}}</p>
+    </InfoModal>
     <AddProductModal v-model="addProductModalState" @changeAddProductModalState="changeAddProductModalState" />
   </div>
 </template>
@@ -49,6 +51,7 @@
 <script>
 import InfoModal from '@/components/InfoModal';
 import AddProductModal from './AddProductModal';
+import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
   export default {
      components: {
       InfoModal,
@@ -60,25 +63,28 @@ import AddProductModal from './AddProductModal';
         addProductModalState:false,
         input:"",
         dialogFormVisible: false,
-        listLoading: false,
+        listLoading: true,
+        note:"",
         currentPage2: 5,
-        tableData: [{
-            ID: "1",
-            name: "王小虎",
-            quote_song: "上海市普陀区金沙江路 1518 弄",
-            planner: "note",
-            album_name: "专辑名称",
-            operation: "操作"
-          },
-        ]
+        tableData: []
       };
+    },
+    mounted(){
+      getProductList().then(res=>{
+        console.log(res)
+        this.listLoading = false;
+        this.tableData = res.data.tableData;
+      })
     },
     methods: {
       /**
        * 打开查看备注
        */
-      checkNote(){
+      viewNote(){
         this.changeInfoState(true);
+        getProductNote().then(res=>{
+          this.note = res.data.info
+        })
       },
       songDialogSure() {
       },
@@ -102,6 +108,18 @@ import AddProductModal from './AddProductModal';
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
+      },
+
+      /**
+       * 删除数据
+       */
+      deleteProductFun(ID){
+        deleteProduct().then(res=>{
+          this.$message({
+          message: '删除成功',
+          type: 'success'
+        });
+        })
       },
 
       /**

@@ -23,13 +23,14 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible">取 消</el-button>
-				<el-button type="primary" @click="songDialogSure">确 定</el-button>
+				<el-button type="primary" :loading="loading" @click="DialogSure">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+import {AddProductSong} from '@/api/song/product'
 	export default {
 		props: {
 			value: {
@@ -51,20 +52,21 @@
 		},
 		data() {
 			return {
+				loading:false,
 				options: [{
-					value: '选项1',
+					value: '黄金糕',
 					label: '黄金糕'
 				}, {
-					value: '选项2',
+					value: '双皮奶',
 					label: '双皮奶'
 				}, {
-					value: '选项3',
+					value: '蚵仔煎',
 					label: '蚵仔煎'
 				}, {
-					value: '选项4',
+					value: '龙须面',
 					label: '龙须面'
 				}, {
-					value: '选项5',
+					value: '北京烤鸭',
 					label: '北京烤鸭'
 				}],
 				value9: [],
@@ -89,27 +91,6 @@
 						trigger: "blur"
 					}]
 				},
-				options: [{
-						value: "选项1",
-						label: "黄金糕"
-					},
-					{
-						value: "选项2",
-						label: "双皮奶"
-					},
-					{
-						value: "选项3",
-						label: "蚵仔煎"
-					},
-					{
-						value: "选项4",
-						label: "龙须面"
-					},
-					{
-						value: "选项5",
-						label: "北京烤鸭"
-					}
-				]
 			};
 		},
 		methods: {
@@ -128,9 +109,17 @@
 			beforeRemove(file, fileList) {
 				return this.$confirm(`确定移除 ${file.name}？`);
 			},
-			songDialogSure() {},
+			DialogSure() {
+				this.loading = true;
+				AddProductSong().then(res=>{
+					this.loading = false;
+					this.dialogFormVisible();
+					this.ruleForm = {}
+				}).catch(res=>{
+					this.loading = false;
+				})
+			},
 			dialogFormVisible() {
-				console.log(111);
 				this.$emit("changeAddProductModalState", false);
 			}
 		}

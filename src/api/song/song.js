@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getList(params) {
   return request({
-    url: '/song/table/list',
+    url: '/song/tableList',
     method: 'POST',
     params
   })
@@ -10,10 +10,26 @@ export function getList(params) {
 
 export function getNote(params) {
     return request({
-      url: '/song/view/note',
+      url: '/song/viewNote',
+      method: 'POST',
+      params
+    })
+  }
+  	
+
+export function quoteSong(params) {
+    return request({
+      url: '/song/quoteSong',
       method: 'POST',
       params
     })
   }
   
-  
+ export function deleteSong(params) {
+    return request({
+      url: '/song/delete',
+      method: 'POST',
+      params
+    })
+  }
+   
