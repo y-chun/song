@@ -2,13 +2,13 @@
   <div class="app-container">
     <div class="app-content">
       <div class="over-table">
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini">专辑管理</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
         <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="addProductModalState=true">新增</el-button>
-        <el-button type="info" icon="el-icon-edit" class="over-table-btn" size="mini" plain>搜索</el-button>
+        <el-button type="info" icon="el-icon-edit" class="over-table-btn" size="mini" plain @click="onCancel">搜索</el-button>
         <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input>
       </div>
       <div class="app-table-box">
-        <el-table :data="tableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading">
+        <el-table :data="currentTableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading">
           <el-table-column prop="ID" label="ID">
           </el-table-column>
           <el-table-column prop="name" label="产品名称">
@@ -22,7 +22,7 @@
           <el-table-column prop="operation" label="操作" width="237">
             <template slot-scope="scope">
               <el-button type="primary" size="mini" @click="addProductModalState=true">编辑</el-button>
-              <el-button type="primary" size="mini" @click="viewNote(scope.row.ID)">查看备注</el-button>
+              <el-button type="primary" size="mini" @click="checkNote(scope.row.ID)">查看备注</el-button>
               <el-button type="primary" size="mini" @click="deleteProductFun(scope.row.ID)">删除</el-button>
             </template>
           </el-table-column>
@@ -32,41 +32,50 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page.sync="currentPage2"
-          :page-sizes="[20, 40, 60]"
-          :page-size="100"
+          :current-page.sync="currentPage"
+          :page-sizes="pageSizes"
+          :page-size="limit"
           layout="sizes, prev, pager, next"
-          :total="1000"
+          :total="total"
           style="float:right">
         </el-pagination>
       </div>
     </div>
-    <InfoModal v-model="infoModalState" @changeInfoState="changeInfoState">
+    <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
       <p>{{note}}</p>
     </InfoModal>
-    <AddProductModal v-model="addProductModalState" @changeAddProductModalState="changeAddProductModalState" />
+    <AddProductModal v-model="addProductModalState" @changeModalState="changeAddProductModalState" />
+    <AlbumMessageModal v-model="albumMessageModalState" @changeModalState="changeAlbumMessageModalState" />
   </div>
 </template>
 
 <script>
 import InfoModal from '@/components/InfoModal';
 import AddProductModal from './AddProductModal';
-import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
+import AlbumMessageModal from './AlbumMessageModal';
+import {getProductList,getProductNote,deleteProduct} from '@/api/song/product';
+import {messageInfo} from "@/utils/common"
   export default {
      components: {
       InfoModal,
-      AddProductModal
+      AddProductModal,
+      AlbumMessageModal
     },
     data() {
       return {
+        infoLoading:false,
         infoModalState:false,
         addProductModalState:false,
+        albumMessageModalState:false,
         input:"",
         dialogFormVisible: false,
         listLoading: true,
         note:"",
-        currentPage2: 5,
-        tableData: []
+        tableData: [],
+        currentPage: 1,
+        pageSizes:[5, 10, 20],
+        sortMethod: data => data,
+        limit:5
       };
     },
     mounted(){
@@ -76,14 +85,34 @@ import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
         this.tableData = res.data.tableData;
       })
     },
+    computed: {
+      total() {
+        return this.tableData.length;
+      },
+      offset() {
+        return this.limit * (this.currentPage - 1);
+      },
+      currentTableData() {
+        const end = this.offset + this.limit;
+        return this.sortMethod(this.tableData).slice(this.offset, end);
+      }
+    },
+    watch: {
+      tableData() {
+        // 切换数据来源，分页重置
+        this.currentPage = 1;
+      }
+    },
     methods: {
       /**
        * 打开查看备注
        */
-      viewNote(){
+      checkNote(){
         this.changeInfoState(true);
+        this.infoLoading = true;
         getProductNote().then(res=>{
-          this.note = res.data.info
+          this.note = res.data.info;
+          this.infoLoading = false;
         })
       },
       songDialogSure() {
@@ -98,13 +127,11 @@ import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
         this.$message("submit!");
       },
       onCancel() {
-        this.$message({
-          message: "cancel!",
-          type: "warning"
-        });
+       messageInfo.bind(this)('取消','success')
       },
       handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        this.limit = val;
+        this.currentPage = 1;
       },
       handleCurrentChange(val) {
         console.log(`当前页: ${val}`);
@@ -114,6 +141,7 @@ import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
        * 删除数据
        */
       deleteProductFun(ID){
+        console.log(ID)
         deleteProduct().then(res=>{
           this.$message({
           message: '删除成功',
@@ -134,6 +162,10 @@ import {getProductList,getProductNote,deleteProduct} from '@/api/song/product'
        */
       changeAddProductModalState(state){
         this.addProductModalState = state;
+      },
+
+      changeAlbumMessageModalState(state){
+        this.albumMessageModalState = state;
       }
     }
   };

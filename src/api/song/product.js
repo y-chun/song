@@ -30,4 +30,12 @@ export function deleteProduct(params) {
     method: 'POST',
     params
   })
+}
+
+export function getAlbumList(params) {
+  return request({
+    url: '/product/AlbumList',
+    method: 'POST',
+    params
+  })
 }    

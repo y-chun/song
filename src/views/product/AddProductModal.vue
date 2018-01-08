@@ -1,6 +1,7 @@
 <template>
-	<div class="modal">
+	<div >
 		<el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%">
+			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
 					<el-input v-model="ruleForm.name"></el-input>
@@ -21,6 +22,7 @@
 					<el-input v-model="ruleForm.note" type="textarea" :rows="3"></el-input>
 				</el-form-item>
 			</el-form>
+			</div>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible">取 消</el-button>
 				<el-button type="primary" :loading="loading" @click="DialogSure">确 定</el-button>
@@ -52,6 +54,7 @@ import {AddProductSong} from '@/api/song/product'
 		},
 		data() {
 			return {
+				modalLoading:false,
 				loading:false,
 				options: [{
 					value: '黄金糕',
@@ -120,7 +123,7 @@ import {AddProductSong} from '@/api/song/product'
 				})
 			},
 			dialogFormVisible() {
-				this.$emit("changeAddProductModalState", false);
+				this.$emit("changeModalState", false);
 			}
 		}
 	};

@@ -1,10 +1,12 @@
 <template>
-  <div class="modal">
+  <div>
       <el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible">
-          <slot></slot>
+          <div class="modal-ctx" v-loading="modalLoading">
+            <slot></slot>
+          </div>
           <div slot="footer" class="dialog-footer">
               <el-button @click="dialogFormVisible">取 消</el-button>
-              <el-button type="primary" @click="songDialogSure">确 定</el-button>
+              <!-- <el-button type="primary" @click="songDialogSure">确 定</el-button> -->
           </div>
       </el-dialog>
   </div>
@@ -21,6 +23,10 @@ export default {
     title:{
         type:String,
         default:"信息窗口"
+    },
+    modalLoading:{
+        type:Boolean,
+        default:false
     }
   },
   computed: {
@@ -49,7 +55,7 @@ export default {
   methods: {
     songDialogSure(){},
     dialogFormVisible() {
-      this.$emit("changeInfoState", false);
+      this.$emit("changeModalState", false);
     }
   }
 };

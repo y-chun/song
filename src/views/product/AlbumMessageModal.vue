@@ -1,19 +1,21 @@
 <template>
 <div class="modal">
-    <el-dialog title="标签管理" :visible.sync="show" @close="dialogFormVisible" width="50%"  @open="getLabelListFun">
+    <el-dialog title="专辑管理" :visible.sync="show" @close="dialogFormVisible" width="50%"  @open="getAlbumListFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <div class="over-table">
             <el-button type="primary" size="mini" >新增</el-button>
           </div>
           <div class="modal-label-box">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
-              <el-table-column prop="label_name" label="标签名称" min-width="80">
+              <el-table-column prop="album_name" label="专辑名称" min-width="80">
                 <template slot-scope="scope">
                   <p v-show="!scope.row['edit']">
-                    {{scope.row.label_name}}
+                    {{scope.row.album_name}}
                   </p>
-                  <el-input v-show="scope.row['edit']" size="small" v-model="scope.row.label_name"/>
+                  <el-input v-show="scope.row['edit']" size="small" v-model="scope.row.album_name"/>
                 </template>
+              </el-table-column>
+              <el-table-column prop="product_num" label="产品数" min-width="80">
               </el-table-column>
               <el-table-column prop="operation" label="操作" min-width="200">
                 <template slot-scope="scope">
@@ -35,7 +37,7 @@
 </template>
 
 <script>
-import {getLabelList} from '@/api/song/song';
+import {getAlbumList} from '@/api/song/product';
 export default {
   props: {
       value: {
@@ -47,6 +49,7 @@ export default {
     show: {
       // getter
       get() {
+
         return this.value;
       },
       // setter
@@ -67,9 +70,10 @@ export default {
     /**
      * 加载标签管理弹窗列表
      */
-    getLabelListFun(){
+    getAlbumListFun(){
       this.modalLoading = true;
-      getLabelList().then(res=>{
+      getAlbumList().then(res=>{
+				console.log(res.data.tableData)
         this.tableData = res.data.tableData;
         this.modalLoading = false;
       }).catch(res=>{

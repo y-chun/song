@@ -64,12 +64,19 @@ p{
 .el-dialog{
   border-radius: 5px;
 }
+
 .el-dialog__header{
   border-bottom: 1px solid #eeeeee;
 }
+
 .el-dialog__footer{
   border-top: 1px solid #eeeeee;
 }
+
 .el-select{
 	width:100%
+}
+
+.modal-ctx{
+	width: 100%;
 }

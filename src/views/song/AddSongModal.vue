@@ -1,28 +1,30 @@
 <template>
 <div class="modal">
-    <el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="活动名称" prop="name">
-                <el-input v-model="ruleForm.name"></el-input>
-            </el-form-item>
-            <el-form-item label="标签" prop="label">
-                <el-select multiple v-model="value9">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="上传音频文件" prop="upload">
-                <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList">
-                    <el-button size="small" type="primary">点击上传</el-button>
-                    <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
-                </el-upload>
-            </el-form-item>
-            <el-form-item label="备注" prop="note">
-                <el-input v-model="ruleForm.name" type="textarea" :rows="3"></el-input>
-            </el-form-item>
-        </el-form>
+    <el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongFormFun">
+        <div class="modal-ctx" v-loading="modalLoading">
+          <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item label="活动名称" prop="name">
+                  <el-input v-model="ruleForm.name"></el-input>
+              </el-form-item>
+              <el-form-item label="标签" prop="label">
+                  <el-select multiple v-model="ruleForm.label_list">
+                      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                  </el-select>
+              </el-form-item>
+              <el-form-item label="上传音频文件" prop="upload">
+                  <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList">
+                      <el-button size="small" type="primary">点击上传</el-button>
+                      <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
+                  </el-upload>
+              </el-form-item>
+              <el-form-item label="备注" prop="note">
+                  <el-input v-model="ruleForm.note" type="textarea" :rows="3"></el-input>
+              </el-form-item>
+          </el-form>
+        </div>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible">取 消</el-button>
+            <el-button @click="cancelDialog">取 消</el-button>
             <el-button type="primary" @click="songDialogSure">确 定</el-button>
         </div>
     </el-dialog>
@@ -30,12 +32,17 @@
 </template>
 
 <script>
+import {getSongForm} from '@/api/song/song';
 export default {
   props: {
       value: {
     	type: Boolean,
     	default: false
     },
+    type:{
+      type:String,
+      default:'add'
+    }
   },
   computed: {
     show: {
@@ -45,13 +52,13 @@ export default {
       },
       // setter
       set(newValue) {
-          console.log(newValue)
         this.$emit("input", newValue);
       }
     }
   },
   data() {
     return {
+      modalLoading:false,
       value9:[],
       fileList: [],
       ruleForm: {
@@ -97,11 +104,25 @@ export default {
     };
   },
   methods: {
+    getSongFormFun(){
+      // console.log(11)
+      console.log(this.type)
+      if(this.type!=="add"){
+        getSongForm().then(res=>{
+          this.ruleForm = res.data.form;
+        })
+      }
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
     handlePreview(file) {
       console.log(file);
+    },
+    cancelDialog(){
+      // this.ruleForm = {};
+      this.$refs['ruleForm'].resetFields();
+      this.dialogFormVisible();
     },
     handleExceed(files, fileList) {
       this.$message.warning(
@@ -115,7 +136,7 @@ export default {
     songDialogSure() {},
     dialogFormVisible() {
       console.log(111);
-      this.$emit("changeAddSongModalState", false);
+      this.$emit("changeModalState", false);
     }
   }
 };
