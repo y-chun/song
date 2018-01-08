@@ -3,8 +3,8 @@
     <div class="app-content">
       <div class="over-table">
         <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="addProductModalState=true">新增</el-button>
-        <el-button type="info" icon="el-icon-edit" class="over-table-btn" size="mini" plain @click="onCancel">搜索</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="addProduct('add')">新增</el-button>
+        <el-button type="info" class="over-table-btn" size="mini" plain @click="onCancel">搜索</el-button>
         <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input>
       </div>
       <div class="app-table-box">
@@ -44,7 +44,7 @@
     <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
       <p>{{note}}</p>
     </InfoModal>
-    <AddProductModal v-model="addProductModalState" @changeModalState="changeAddProductModalState" />
+    <AddProductModal v-model="addProductModalState" @changeModalState="changeAddProductModalState" :type="addModalType"/>
     <AlbumMessageModal v-model="albumMessageModalState" @changeModalState="changeAlbumMessageModalState" />
   </div>
 </template>
@@ -68,6 +68,7 @@ import {messageInfo} from "@/utils/common"
         addProductModalState:false,
         albumMessageModalState:false,
         input:"",
+        addModalType:"add",
         dialogFormVisible: false,
         listLoading: true,
         note:"",
@@ -80,7 +81,6 @@ import {messageInfo} from "@/utils/common"
     },
     mounted(){
       getProductList().then(res=>{
-        console.log(res)
         this.listLoading = false;
         this.tableData = res.data.tableData;
       })
@@ -104,6 +104,11 @@ import {messageInfo} from "@/utils/common"
       }
     },
     methods: {
+      addProduct(type,ID){
+        this.addModalType = type;
+        this.changeAddProductModalState(true);
+      },
+
       /**
        * 打开查看备注
        */

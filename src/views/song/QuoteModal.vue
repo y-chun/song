@@ -112,7 +112,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			cancelDialog(){
 				this.$refs['ruleForm'].resetFields();
 				this.dialogFormVisible();
-    	},
+    		},
 			handleExceed(files, fileList) {
 
 			},

@@ -56,3 +56,27 @@ export function putQuoteSong(params) {
       params
     })
   }
+
+  export function addSong(params) {
+    return request({
+      url: '/song/addSong',
+      method: 'POST',
+      params
+    })
+  }
+
+  export function editSong(params) {
+    return request({
+      url: '/song/editSong',
+      method: 'POST',
+      params
+    })
+  }
+
+  export function getSongNum(params) {
+    return request({
+      url: '/song/songNum',
+      method: 'POST',
+      params
+    })
+  }

@@ -4,7 +4,7 @@
       <div class="over-table">
         <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn" size="mini">标签管理</el-button>
         <el-button type="primary" icon="el-icon-edit" @click="addSong('add')" class="over-table-btn" size="mini">新增</el-button>
-        <el-button type="info" icon="el-icon-edit" @click="addSongState=true" class="over-table-btn" size="mini" plain>搜索</el-button>
+        <el-button type="info"@click="addSongState=true" class="over-table-btn" size="mini" plain>搜索</el-button>
         <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input>
       </div>
       <!--曲子列表-->
@@ -151,7 +151,6 @@ export default {
     },
 
     addSong(type,ID){
-      console.log(ID)
       this.addModalType=type;
       this.changeAddSongModalState(true);
     },
@@ -231,7 +230,7 @@ export default {
     },
 
     clickCitation(){
-      console.log(11)
+      this.changeCheckSongModalState(true)
     }
   }
 };

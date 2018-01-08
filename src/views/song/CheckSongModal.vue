@@ -1,14 +1,16 @@
 <template>
 <div class="modal">
-    <el-dialog title="查看曲子" :visible.sync="show" @close="dialogFormVisible" width="50%">
+    <el-dialog title="查看曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongNumFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <div class="over-table">
             <el-button type="primary" size="mini" >新增</el-button>
           </div>
-          <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
-            <el-table-column prop="labelName" label="产品名称" min-width="80">
-            </el-table-column>
-          </el-table>
+          <div class="modal-label-box">
+            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
+              <el-table-column prop="product_name" label="产品名称" min-width="80">
+              </el-table-column>
+            </el-table>
+          </div>
         </div>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible">取 消</el-button>
@@ -19,6 +21,7 @@
 </template>
 
 <script>
+import {getSongNum} from '@/api/song/song';
 export default {
   props: {
       value: {
@@ -42,17 +45,20 @@ export default {
     return {
       modalLoading:false,
       listLoading:false,
-      tableData: [
-        {
-          productName: "1",
-        },
-         {
-          productName: "1",
-        },
-      ]
+      tableData: []
     };
   },
   methods: {
+    getSongNumFun(){
+      // console.log(this.tableData)
+      this.modalLoading = true;
+      getSongNum().then(res=>{
+        this.tableData = res.data.tableData
+        this.modalLoading = false;
+      }).catch(res=>{
+        this.modalLoading = false;
+      })
+    },
     songDialogSure(){},
     dialogFormVisible() {
       this.$emit("changeModalState", false);
@@ -80,6 +86,10 @@ export default {
 }
 .over-table {
   overflow: hidden;
+}
+.modal-label-box{
+  max-height:300px;
+  overflow-y:auto;
 }
 </style>
 

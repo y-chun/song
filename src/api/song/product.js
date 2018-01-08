@@ -16,9 +16,9 @@ export function getProductNote(params) {
   })
 }
 
-export function AddProductSong(params) {
+export function AddProduct(params) {
   return request({
-    url: '/product/addSong',
+    url: '/product/addProduct',
     method: 'POST',
     params
   })
@@ -39,3 +39,12 @@ export function getAlbumList(params) {
     params
   })
 }    
+
+
+export function getProductForm(params) {
+  return request({
+    url: '/product/productForm',
+    method: 'POST',
+    params
+  })
+}

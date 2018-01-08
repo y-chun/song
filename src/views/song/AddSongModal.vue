@@ -24,15 +24,15 @@
           </el-form>
         </div>
         <div slot="footer" class="dialog-footer">
-            <el-button @click="cancelDialog">取 消</el-button>
-            <el-button type="primary" @click="songDialogSure">确 定</el-button>
+            <el-button @click="dialogFormVisible">取 消</el-button>
+            <el-button type="primary" @click="songDialogSure" :loading="loading">确 定</el-button>
         </div>
     </el-dialog>
 </div>
 </template>
 
 <script>
-import {getSongForm} from '@/api/song/song';
+import {getSongForm,addSong,editSong} from '@/api/song/song';
 export default {
   props: {
       value: {
@@ -59,10 +59,11 @@ export default {
   data() {
     return {
       modalLoading:false,
+      loading:false,
       value9:[],
       fileList: [],
       ruleForm: {
-        name: ""
+        // name: ""
       },
       rules: {
         name: [
@@ -105,11 +106,10 @@ export default {
   },
   methods: {
     getSongFormFun(){
-      // console.log(11)
-      console.log(this.type)
       if(this.type!=="add"){
         getSongForm().then(res=>{
           this.ruleForm = res.data.form;
+          console.log(this.ruleForm)
         })
       }
     },
@@ -118,11 +118,6 @@ export default {
     },
     handlePreview(file) {
       console.log(file);
-    },
-    cancelDialog(){
-      // this.ruleForm = {};
-      this.$refs['ruleForm'].resetFields();
-      this.dialogFormVisible();
     },
     handleExceed(files, fileList) {
       this.$message.warning(
@@ -133,9 +128,27 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
-    songDialogSure() {},
+    songDialogSure() {
+      this.loading = true;
+      if(this.type==='add'){
+        addSong().then(res=>{
+          this.loading = false;
+          this.dialogFormVisible();
+        }).catch(res=>{
+          this.loading = false;
+        })
+      }else if(this.type==='edit'){
+        editSong().then(res=>{
+          this.loading = false;
+          this.dialogFormVisible();
+        }).catch(res=>{
+          this.loading = false;
+        })
+      }
+    },
     dialogFormVisible() {
       console.log(111);
+      this.$refs['ruleForm'].resetFields();
       this.$emit("changeModalState", false);
     }
   }

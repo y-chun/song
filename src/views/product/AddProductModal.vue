@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%">
+		<el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
 			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
@@ -32,13 +32,17 @@
 </template>
 
 <script>
-import {AddProductSong} from '@/api/song/product'
+import {AddProduct,getProductForm} from '@/api/song/product'
 	export default {
 		props: {
 			value: {
 				type: Boolean,
 				default: false
 			},
+			type:{
+				type:String,
+				default:'add'
+			}
 		},
 		computed: {
 			show: {
@@ -97,6 +101,17 @@ import {AddProductSong} from '@/api/song/product'
 			};
 		},
 		methods: {
+			getProductFormFun(){
+				this.modalLoading = true;
+				getProductForm().then(res=>{
+					console.log(res)
+					this.ruleForm = res.data.form;
+					this.modalLoading = false;
+				}).catch(res=>{
+					this.modalLoading = false;	
+				})
+			},
+
 			handleRemove(file, fileList) {
 				console.log(file, fileList);
 			},
@@ -114,7 +129,7 @@ import {AddProductSong} from '@/api/song/product'
 			},
 			DialogSure() {
 				this.loading = true;
-				AddProductSong().then(res=>{
+				AddProduct().then(res=>{
 					this.loading = false;
 					this.dialogFormVisible();
 					this.ruleForm = {}
