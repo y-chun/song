@@ -1,50 +1,82 @@
 import request from '@/utils/request'
 
-export function getProductList(params) {
+export function getProductList(data) {
   return request({
     url: '/product/tableList',
     method: 'POST',
-    params
+    data
   })
 }
 
-export function getProductNote(params) {
+export function getProductNote(data) {
   return request({
     url: '/product/viewNote',
     method: 'POST',
-    params
+    data
   })
 }
 
-export function AddProduct(params) {
+export function AddProduct(data) {
   return request({
     url: '/product/addProduct',
     method: 'POST',
-    params
+    data
   })
 }
 
-export function deleteProduct(params) {
+export function editProduct(data) {
+  return request({
+    url: '/product/editProduct',
+    method: 'POST',
+    data
+  })
+}
+
+export function deleteProduct(data) {
   return request({
     url: '/product/delete',
     method: 'POST',
-    params
+    data
   })
 }
 
-export function getAlbumList(params) {
+export function getAlbumList(data) {
   return request({
     url: '/product/AlbumList',
     method: 'POST',
-    params
+    data
   })
 }    
 
 
-export function getProductForm(params) {
+export function getProductForm(data) {
   return request({
     url: '/product/productForm',
     method: 'POST',
-    params
+    data
+  })
+}
+
+export function uploadProductAlubm(data) {
+  return request({
+    url: '/product/uploadAlubm',
+    method: 'POST',
+    data
+  })
+}
+
+export function deleteProductAlubm(data) {
+  return request({
+    url: '/product/deleteAlubm',
+    method: 'POST',
+    data
+  })
+}
+
+export function addProductAlubm(data) {
+  return request({
+    url: '/product/addAlubm',
+    method: 'POST',
+    data
   })
 }

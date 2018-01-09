@@ -4,11 +4,12 @@
       <div class="over-table">
         <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
         <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="addProduct('add')">新增</el-button>
-        <el-button type="info" class="over-table-btn" size="mini" plain @click="onCancel">搜索</el-button>
-        <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input>
+        <el-button type="info" class="over-table-btn" size="mini" plain @click="loadTableList">搜索</el-button>
+        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="mini" class="over-table-input">
+        </el-select>
       </div>
       <div class="app-table-box">
-        <el-table :data="currentTableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading">
+        <el-table :data="currentTableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading" border stripe>
           <el-table-column prop="ID" label="ID">
           </el-table-column>
           <el-table-column prop="name" label="产品名称">
@@ -21,9 +22,9 @@
           </el-table-column>
           <el-table-column prop="operation" label="操作" width="237">
             <template slot-scope="scope">
-              <el-button type="primary" size="mini" @click="addProductModalState=true">编辑</el-button>
-              <el-button type="primary" size="mini" @click="checkNote(scope.row.ID)">查看备注</el-button>
-              <el-button type="primary" size="mini" @click="deleteProductFun(scope.row.ID)">删除</el-button>
+              <el-button type="primary" size="mini" @click="addProduct('edit',scope.row.id)">编辑</el-button>
+              <el-button type="primary" size="mini" @click="checkNote(scope.row.id)">查看备注</el-button>
+              <el-button type="primary" size="mini" @click="deleteProductFun(scope.row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -44,7 +45,7 @@
     <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
       <p>{{note}}</p>
     </InfoModal>
-    <AddProductModal v-model="addProductModalState" @changeModalState="changeAddProductModalState" :type="addModalType"/>
+    <AddProductModal v-model="addProductModalState" @changeModalState="changeAddProductModalState" :type="addModalType" :albumList = "albumList" :songList = "songList" :id = "addID" />
     <AlbumMessageModal v-model="albumMessageModalState" @changeModalState="changeAlbumMessageModalState" />
   </div>
 </template>
@@ -76,14 +77,15 @@ import {messageInfo} from "@/utils/common"
         currentPage: 1,
         pageSizes:[5, 10, 20],
         sortMethod: data => data,
-        limit:5
+        limit:5,
+        albumList:[],
+        songList:[],
+        search:"",
+        addID:"",
       };
     },
     mounted(){
-      getProductList().then(res=>{
-        this.listLoading = false;
-        this.tableData = res.data.tableData;
-      })
+     this.loadTableList();
     },
     computed: {
       total() {
@@ -104,33 +106,40 @@ import {messageInfo} from "@/utils/common"
       }
     },
     methods: {
-      addProduct(type,ID){
+      addProduct(type,id){
         this.addModalType = type;
+        !!id?this.addID = id:null
         this.changeAddProductModalState(true);
       },
 
       /**
        * 打开查看备注
        */
-      checkNote(){
+      checkNote(id){
         this.changeInfoState(true);
         this.infoLoading = true;
-        getProductNote().then(res=>{
+        getProductNote({id:id}).then(res=>{
           this.note = res.data.info;
           this.infoLoading = false;
         })
       },
+      loadTableList(){
+        this.listLoading = true;
+        getProductList({search:this.search}).then(res=>{
+          this.listLoading = false;
+          this.search = [];
+          this.tableData = [...res.data.tableData];
+          this.albumList = [...res.data.album_list];
+          this.songList = [...res.data.song_list];
+        })
+      },
+
       songDialogSure() {
       },
       cellClick(e, c, cell, event) {
         console.log(c);
       },
-      handle() {
-        console.log(111);
-      },
-      onSubmit() {
-        this.$message("submit!");
-      },
+
       onCancel() {
        messageInfo.bind(this)('取消','success')
       },
@@ -145,13 +154,18 @@ import {messageInfo} from "@/utils/common"
       /**
        * 删除数据
        */
-      deleteProductFun(ID){
-        console.log(ID)
-        deleteProduct().then(res=>{
-          this.$message({
-          message: '删除成功',
-          type: 'success'
-        });
+      deleteProductFun(row){
+        this.$confirm(`您确定要删除曲目${row.name}吗？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          deleteProduct({id:row.id}).then(res=>{
+            messageInfo.bind(this)('恭喜您，删除成功','success');
+            this.loadTableList();
+          }).catch(res=>{
+            messageInfo.bind(this)('删除失败','error');
+          })
         })
       },
 

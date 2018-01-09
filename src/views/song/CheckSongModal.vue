@@ -2,9 +2,9 @@
 <div class="modal">
     <el-dialog title="查看曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongNumFun">
         <div class="modal-ctx" v-loading="modalLoading">
-          <div class="over-table">
+          <!-- <div class="over-table">
             <el-button type="primary" size="mini" >新增</el-button>
-          </div>
+          </div> -->
           <div class="modal-label-box">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
               <el-table-column prop="product_name" label="产品名称" min-width="80">
@@ -50,7 +50,6 @@ export default {
   },
   methods: {
     getSongNumFun(){
-      // console.log(this.tableData)
       this.modalLoading = true;
       getSongNum().then(res=>{
         this.tableData = res.data.tableData

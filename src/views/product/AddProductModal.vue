@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
+		<el-dialog title="新增产品" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
 			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
@@ -8,13 +8,13 @@
 				</el-form-item>
 				<el-form-item label="归属专辑" prop="album">
 					<el-select v-model="ruleForm.album" placeholder="请选择" size="large">
-						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						<el-option v-for="item in albumList" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="引用曲子" prop="quote">
 					<el-select v-model="ruleForm.quote" placeholder="请选择">
-						<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+						<el-option v-for="item in songList" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
 					</el-select>
 				</el-form-item>
@@ -32,7 +32,8 @@
 </template>
 
 <script>
-import {AddProduct,getProductForm} from '@/api/song/product'
+import {AddProduct,getProductForm,editProduct} from '@/api/song/product';
+import {messageInfo} from "@/utils/common"
 	export default {
 		props: {
 			value: {
@@ -42,6 +43,18 @@ import {AddProduct,getProductForm} from '@/api/song/product'
 			type:{
 				type:String,
 				default:'add'
+			},
+			albumList:{
+				type:Array,
+				default:[]
+			},
+			songList:{
+				type:Array,
+				default:[]
+			},
+			id:{
+				type:String,
+				default:''
 			}
 		},
 		computed: {
@@ -60,26 +73,13 @@ import {AddProduct,getProductForm} from '@/api/song/product'
 			return {
 				modalLoading:false,
 				loading:false,
-				options: [{
-					value: '黄金糕',
-					label: '黄金糕'
-				}, {
-					value: '双皮奶',
-					label: '双皮奶'
-				}, {
-					value: '蚵仔煎',
-					label: '蚵仔煎'
-				}, {
-					value: '龙须面',
-					label: '龙须面'
-				}, {
-					value: '北京烤鸭',
-					label: '北京烤鸭'
-				}],
 				value9: [],
 				fileList: [],
 				ruleForm: {
-					name: ""
+					name: "",
+					album:[],
+					quote:"",
+					note:""
 				},
 				rules: {
 					name: [{
@@ -102,14 +102,18 @@ import {AddProduct,getProductForm} from '@/api/song/product'
 		},
 		methods: {
 			getProductFormFun(){
-				this.modalLoading = true;
-				getProductForm().then(res=>{
-					console.log(res)
-					this.ruleForm = res.data.form;
-					this.modalLoading = false;
-				}).catch(res=>{
-					this.modalLoading = false;	
-				})
+				console.log(this.type)
+				if(this.type==='edit'){
+					this.modalLoading = true;
+					getProductForm({id:this.id}).then(res=>{
+						console.log(res)
+						this.ruleForm = res.data.form;
+						this.modalLoading = false;
+						}).catch(res=>{
+							this.modalLoading = false;	
+						})
+				}
+				
 			},
 
 			handleRemove(file, fileList) {
@@ -119,25 +123,41 @@ import {AddProduct,getProductForm} from '@/api/song/product'
 				console.log(file);
 			},
 			handleExceed(files, fileList) {
-				this.$message.warning(
-					`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length +
-	              fileList.length} 个文件`
-				);
+
 			},
 			beforeRemove(file, fileList) {
 				return this.$confirm(`确定移除 ${file.name}？`);
 			},
 			DialogSure() {
-				this.loading = true;
-				AddProduct().then(res=>{
-					this.loading = false;
-					this.dialogFormVisible();
-					this.ruleForm = {}
-				}).catch(res=>{
-					this.loading = false;
+				this.$refs['ruleForm'].validate(valid=>{
+					if(valid){
+						this.loading = true;
+						if(this.type==='edit'){
+							editProduct({id:this.id,...this.ruleForm}).then(res=>{
+								this.loading = false;
+								messageInfo.bind(this)('更新成功','success')
+								this.dialogFormVisible();
+							}).catch(res=>{
+								this.loading = false;
+								messageInfo.bind(this)('更新失败','error')
+							})
+						}else if (this.type ==='add'){
+							AddProduct({id:this.id,...this.ruleForm}).then(res=>{
+								this.loading = false;
+								this.dialogFormVisible();
+								messageInfo.bind(this)('添加成功','success')
+							}).catch(res=>{
+								this.loading = false;
+								messageInfo.bind(this)('添加失败','error')
+							})
+						}
+					}
 				})
+				
+				
 			},
 			dialogFormVisible() {
+				this.$refs['ruleForm'].resetFields();
 				this.$emit("changeModalState", false);
 			}
 		}

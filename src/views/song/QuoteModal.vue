@@ -11,7 +11,7 @@
 					</el-form-item>
 					<el-form-item label="归属专辑" prop="album">
 						<el-select v-model="ruleForm.album" placeholder="请选择" size="large">
-							<el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+							<el-option v-for="item in albumList" :key="item.value" :label="item.label" :value="item.value">
 							</el-option>
 					</el-select>
 					</el-form-item>
@@ -21,7 +21,7 @@
 				</el-form>
 			</div>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="cancelDialog">取 消</el-button>
+				<el-button @click="dialogFormVisible">取 消</el-button>
 				<el-button type="primary" @click="DialogSure" :loading = "loading">确 定</el-button>
 			</div>
 		</el-dialog>
@@ -36,6 +36,14 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				type: Boolean,
 				default: false
 			},
+			 albumList:{
+				type:Array,
+				default:[]
+			},
+			id:{
+				type:String,
+				default:""
+			}
 		},
 		computed: {
 			show: {
@@ -75,28 +83,12 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 						trigger: "blur"
 					}]
 				},
-				options: [{
-					value: '黄金糕',
-					label: '黄金糕'
-				}, {
-					value: '双皮奶',
-					label: '双皮奶'
-				}, {
-					value: '蚵仔煎',
-					label: '蚵仔煎'
-				}, {
-					value: '龙须面',
-					label: '龙须面'
-				}, {
-					value: '北京烤鸭',
-					label: '北京烤鸭'
-				}],
 			};
 		},
 		methods: {
 			getQuoteContentFun(){
 				this.modalLoading = true;
-				getQuoteContent().then(res=>{
+				getQuoteContent({id:this.id}).then(res=>{
 					this.modalLoading = false;
 					this.ruleForm = res.data.quote_form;
 				}).catch(res=>{
@@ -110,7 +102,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				console.log(file);
 			},
 			cancelDialog(){
-				this.$refs['ruleForm'].resetFields();
+				
 				this.dialogFormVisible();
     		},
 			handleExceed(files, fileList) {
@@ -120,14 +112,21 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			},
 			DialogSure() {
 				this.loading = true;
-				putQuoteSong().then(res=>{
-					this.loading = false;
-					this.dialogFormVisible();
-				}).catch(res=>{
-					this.loading = false;
+				console.log(this.ruleForm)
+				this.$refs['ruleForm'].validate(valid=>{
+					if(valid){
+						putQuoteSong({id:this.id,...this.ruleForm}).then(res=>{
+							this.loading = false;
+							this.dialogFormVisible();
+						}).catch(res=>{
+							this.loading = false;
+						})
+					}
 				})
+				
 			},
 			dialogFormVisible() {
+				this.$refs['ruleForm'].resetFields();
 				this.$emit("changeModalState", false);
 			}
 		}

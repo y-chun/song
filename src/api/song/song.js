@@ -1,82 +1,117 @@
 import request from '@/utils/request'
 
-export function getList(params) {
+export function getList(data) {
   return request({
     url: '/song/tableList',
     method: 'POST',
-    params
+    data
   })
 }
 
-export function getNote(params) {
+export function getNote(data) {
     return request({
       url: '/song/viewNote',
       method: 'POST',
-      params
+      data
     })
   }
   	
 
-export function putQuoteSong(params) {
+export function putQuoteSong(data) {
     return request({
       url: '/song/quoteSong',
       method: 'POST',
-      params
+      data
     })
   }
   
- export function deleteSong(params) {
+ export function deleteSong(data) {
     return request({
       url: '/song/delete',
       method: 'POST',
-      params
+      data
     })
   }
 
-  export function getLabelList(params) {
+  export function getLabelList(data) {
     return request({
       url: '/song/labelList',
       method: 'POST',
-      params
+      data
     })
   }
   
-  export function getQuoteContent(params) {
+  export function getQuoteContent(data) {
     return request({
       url: '/song/quote',
       method: 'POST',
-      params
+      data
     })
   }
 
-  export function getSongForm(params) {
+  export function getSongForm(data) {
     return request({
       url: '/song/SongForm',
       method: 'POST',
-      params
+      data
     })
   }
 
-  export function addSong(params) {
+  export function addSong(data) {
     return request({
       url: '/song/addSong',
       method: 'POST',
-      params
+      data
     })
   }
 
-  export function editSong(params) {
+  export function editSong(data) {
     return request({
       url: '/song/editSong',
       method: 'POST',
-      params
+      data
     })
   }
 
-  export function getSongNum(params) {
+  export function getSongNum(data) {
     return request({
       url: '/song/songNum',
       method: 'POST',
-      params
+      data
     })
   }
+
+
+  export function uploadSongLabel(data) {
+    return request({
+      url: '/song/uploadLabel',
+      method: 'POST',
+      data
+    })
+  }
+	
+  
+  export function deleteSongLabel(data) {
+    return request({
+      url: '/song/deleteLabel',
+      method: 'POST',
+      data
+    })
+  }
+  
+  export function searchSongSelectList(data) {
+    return request({
+      url: '/song/searchSelect',
+      method: 'POST',
+      data
+    })
+  }
+
+  export function addSongLabel(data) {
+    return request({
+      url: '/song/addLabel',
+      method: 'POST',
+      data
+    })
+  }
+  

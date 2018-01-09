@@ -3,7 +3,7 @@
     <el-dialog title="专辑管理" :visible.sync="show" @close="dialogFormVisible" width="50%"  @open="getAlbumListFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <div class="over-table">
-            <el-button type="primary" size="mini" >新增</el-button>
+            <el-button type="primary" size="mini" @click="addAlbum">新增</el-button>
           </div>
           <div class="modal-label-box">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
@@ -12,7 +12,7 @@
                   <p v-show="!scope.row['edit']">
                     {{scope.row.album_name}}
                   </p>
-                  <el-input v-show="scope.row['edit']" size="small" v-model="scope.row.album_name"/>
+                  <el-input v-show="scope.row['edit']" size="small" v-model="scope.row.album_name" placeholder="请输入标签或专辑名称"/>
                 </template>
               </el-table-column>
               <el-table-column prop="product_num" label="产品数" min-width="80">
@@ -37,7 +37,8 @@
 </template>
 
 <script>
-import {getAlbumList} from '@/api/song/product';
+import {getAlbumList,uploadProductAlubm,deleteProductAlubm} from '@/api/song/product';
+import {messageInfo} from "@/utils/common"
 export default {
   props: {
       value: {
@@ -106,15 +107,40 @@ export default {
      * 删除表格数据
      */
     deleteTable(index){
-      
+      this.modalLoading = true;
+      deleteProductAlubm().then(res=>{
+        this.modalLoading = false;
+        this.getAlbumListFun();
+        messageInfo.bind(this)('删除成功','success')
+      }).catch(res=>{
+        this.modalLoading = false;
+        messageInfo.bind(this)('删除失败','error')
+      })
     },
 
     /**
      * 保存表格数据
      */
     saveTable(index){
-
+      this.modalLoading = true;
+      uploadProductAlubm().then(res=>{
+        this.modalLoading = false;
+        this.getAlbumListFun();
+        messageInfo.bind(this)('更新成功','success')
+      }).catch(res=>{
+        this.modalLoading = false;
+         messageInfo.bind(this)('更新失败','error')
+      })
       this.cancleEditTable(index);//停止编辑
+    },
+
+    addAlbum(){
+      let albumOb = {
+        "album_name": "",
+        "product_num": "",
+        "edit":true
+      }
+      this.tableData.push(albumOb)
     }
   }
 };
