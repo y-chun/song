@@ -3,7 +3,8 @@
     <el-dialog title="专辑管理" :visible.sync="show" @close="dialogFormVisible" width="50%"  @open="getAlbumListFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <div class="over-table">
-            <el-button type="primary" size="mini" @click="addAlbum">新增</el-button>
+            <el-button type="primary" size="mini" 
+            class="over-table-btn" @click="addAlbum">新增</el-button>
           </div>
           <div class="modal-label-box">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
@@ -22,8 +23,10 @@
                   <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope.$index)">编辑</el-button>
                   <el-button type="text" size="mini" v-show="!scope.row['edit']"
                   @click="deleteTable(scope.$index)">删除</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['edit']" @click="saveTable(scope.$index)">保存</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['edit']" @click="cancleEditTable(scope.$index)">取消</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope.$index)">保存</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="cancleEditTable(scope.$index)">取消</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="addAlbumTable(scope)">保存</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="cancleAddAlbumTable(scope.$index)">取消</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -37,7 +40,7 @@
 </template>
 
 <script>
-import {getAlbumList,uploadProductAlubm,deleteProductAlubm} from '@/api/song/product';
+import {getAlbumList,uploadProductAlubm,deleteProductAlubm,addProductAlubm} from '@/api/song/product';
 import {messageInfo} from "@/utils/common"
 export default {
   props: {
@@ -85,6 +88,28 @@ export default {
     songDialogSure(){},
     dialogFormVisible() {
       this.$emit("changeModalState", false);
+    },
+    addAlbumTable(scope){
+      console.log(scope)
+      if(scope.row.album_name.length==0){
+         messageInfo.bind(this)('标签内容不能为空','warn')
+      }else{
+        this.modalLoading = true;
+        addProductAlubm().then(res=>{
+        this.modalLoading = false;
+        messageInfo.bind(this)('添加成功','success');
+        this.getAlbumListFun();
+        }).catch(res=>{
+          this.modalLoading =false;
+          messageInfo.bind(this)('添加失败','error');
+        })
+      }
+    },
+
+    cancleAddAlbumTable(index){
+      this.tableData.splice(index,1);
+      console.log(this.tableData)
+      this.tableData = [...this.tableData];
     },
 
     /**
@@ -138,7 +163,8 @@ export default {
       let albumOb = {
         "album_name": "",
         "product_num": "",
-        "edit":true
+        "edit":true,
+        "save":true
       }
       this.tableData.push(albumOb)
     }
@@ -161,6 +187,8 @@ export default {
 }
 .over-table-btn {
   margin: 10px;
+}
+.pull-right{
   float: right;
 }
 .over-table {

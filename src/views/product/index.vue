@@ -2,9 +2,9 @@
   <div class="app-container">
     <div class="app-content">
       <div class="over-table">
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn" size="mini" @click="addProduct('add')">新增</el-button>
-        <el-button type="info" class="over-table-btn" size="mini" plain @click="loadTableList">搜索</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right" size="mini" @click="addProduct('add')">新增</el-button>
+        <el-button type="info" class="over-table-btn pull-right" size="mini" plain @click="loadTableList">搜索</el-button>
         <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="mini" class="over-table-input">
         </el-select>
       </div>
@@ -205,6 +205,8 @@ import {messageInfo} from "@/utils/common"
   }
   .over-table-btn {
     margin: 10px;
+  }
+  .pull-right{
     float: right;
   }
   .over-table {

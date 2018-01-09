@@ -13,7 +13,9 @@
                   </el-select>
               </el-form-item>
               <el-form-item label="上传音频文件" prop="upload">
-                  <el-upload class="upload-demo" action=" https://easy-mock.com/mock/5a4f3088d344f80dfbed7c01/song/song/uploadAudio" :on-preview="handlePreview" :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList" >
+                  <el-upload class="upload-demo" action=" https://easy-mock.com/mock/5a4f3088d344f80dfbed7c01/song/song/uploadAudio" :on-preview="handlePreview"
+                  :on-success="handleSuccess"
+                   :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList" >
                       <el-input v-model="ruleForm.upload" style="display:none;"/>
                       <el-button size="small" type="primary">点击上传</el-button>
                       <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
@@ -26,14 +28,15 @@
         </div>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible">取 消</el-button>
-            <el-button type="primary" @click="songDialogSure">确 定</el-button>
+            <el-button type="primary" @click="songDialogSure" :loading = "loading">确 定</el-button>
         </div>
     </el-dialog>
 </div>
 </template>
 
 <script>
-import {getSongForm,searchSongSelectList} from '@/api/song/song';
+import {getSongForm,searchSongSelectList,addSong,editSong} from '@/api/song/song';
+import {messageInfo} from "@/utils/common"
 export default {
   props: {
       value: {
@@ -44,6 +47,10 @@ export default {
       type:String,
       default:'add'
     },
+    id:{
+      type:String,
+      default:""
+    }
   },
   computed: {
     show: {
@@ -59,11 +66,17 @@ export default {
   },
   data() {
     return {
+      loading:false,
       modalLoading:false,
       selectLoading:false,
       value9:[],
       fileList: [],
-      ruleForm: {},
+      ruleForm: {
+        name:"",
+        label_list:[],
+        upload:"",
+        note:""
+      },
       rules: {
         name: [
           {
@@ -78,6 +91,7 @@ export default {
           }],
           upload:[{
             required: true,
+            message: "文件未上传",
           }]
         
       },
@@ -91,7 +105,7 @@ export default {
       
       if(this.type==="edit"){
         this.modalLoading = true
-        getSongForm().then(res=>{  
+        getSongForm({id:this.id,...this.ruleForm}).then(res=>{  
           this.ruleForm = res.data.form;
           this.modalLoading = false;
         }).catch(res=>{
@@ -109,7 +123,11 @@ export default {
         console.log(res)
       })
     },
-
+    handleSuccess(res){
+      console.log(res)
+      this.ruleForm.upload = res.data.audio_url;
+      console.log(this.ruleForm)
+    },
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -130,7 +148,33 @@ export default {
     beforeRemove(file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`);
     },
-    songDialogSure() {},
+    songDialogSure() {
+      this.$refs['ruleForm'].validate(valid=>{
+        if(valid){
+          this.loading = true;
+          if(this.type==='edit'){
+            editSong({id:this.id,...this.ruleForm}).then(res=>{
+              this.loading = false;
+              messageInfo.bind(this)('更新成功','success');
+              this.dialogFormVisible();
+            }).catch(res=>{
+                this.loading = false;
+                messageInfo.bind(this)('更新失败','error');
+              })
+          }else if(this.type ==='add'){
+            addSong({id:this.id,...this.releForm}).then(res=>{
+              this.loading = false;
+              this.dialogFormVisible();
+              messageInfo.bind(this)('添加成功','success')
+            }).catch(res=>{
+              this.loading = false;
+              messageInfo.bind(this)('添加失败','error')
+              })
+          }
+        }
+      })
+      
+    },
     dialogFormVisible() {
       console.log(111);
       this.$refs['ruleForm'].resetFields();

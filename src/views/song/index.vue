@@ -2,9 +2,9 @@
   <div class="app-container">
     <div class="app-content">
       <div class="over-table">
-        <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn" size="mini">标签管理</el-button>
-        <el-button type="primary" icon="el-icon-edit" @click="addSong('add')" class="over-table-btn" size="mini">新增</el-button>
-        <el-button type="info" @click="loadTableList" class="over-table-btn" size="mini" plain>搜索</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn pull-right" size="mini">标签管理</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="addSongModalFun('add')" class="over-table-btn pull-right" size="mini">新增</el-button>
+        <el-button type="info" @click="loadTableList" class="over-table-btn pull-right" size="mini" plain>搜索</el-button>
         <!-- <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input> -->
         <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="mini" class="over-table-input">
           <!-- <el-option v-for="item in options5" :key="item.value" :label="item.label" :value="item.value">
@@ -40,7 +40,7 @@
             <template slot-scope="scope">
               <el-button @click="handleClick(scope.row)" type="primary" size="mini">试听</el-button>
               <el-button type="primary" size="mini" @click="openQuoteModal(scope.row.id)">引用</el-button>
-              <el-button type="primary" size="mini" @click="addSong('edit',scope.row.id)">编辑</el-button>
+              <el-button type="primary" size="mini" @click="addSongModalFun('edit',scope.row.id)">编辑</el-button>
               <el-button type="primary" size="mini" @click="checkNote(scope.row.id)">查看备注</el-button>
               <el-button type="primary" size="mini" @click="deleteSongFun(scope.row)">删除</el-button>
             </template>
@@ -60,7 +60,7 @@
         </el-pagination>
       </div>
       <!--新增曲子弹窗-->
-      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" />
+      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addID"/>
       <LabelManage v-model="labelManageState" @changeModalState="changeLabelManageState"/>
       <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
         <p>{{note}}</p>
@@ -119,6 +119,7 @@ export default {
         }],
       search: [],
       quoteId:"",
+      addID:""
     };
   },
   mounted(){
@@ -157,8 +158,9 @@ export default {
       })
     },
 
-    addSong(type,id){
+    addSongModalFun(type,id){
       this.addModalType=type;
+      !!id?this.addID = id:null
       this.changeAddSongModalState(true);
     },
     handleClick() {},
@@ -269,6 +271,8 @@ export default {
 }
 .over-table-btn {
   margin: 10px;
+}
+.pull-right{
   float: right;
 }
 .over-table {

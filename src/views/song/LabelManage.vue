@@ -3,7 +3,7 @@
     <el-dialog title="标签管理" :visible.sync="show" @close="dialogFormVisible" width="50%"  @open="getLabelListFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <div class="over-table">
-            <el-button type="primary" size="mini" @click="addLabel">新增</el-button>
+            <el-button type="primary" size="mini" class="over-table-btn" @click="addLabel">新增</el-button>
           </div>
           <div class="modal-label-box">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
@@ -19,7 +19,7 @@
                 <template slot-scope="scope">
                   <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope.$index)">编辑</el-button>
                   <el-button type="text" size="mini" v-show="!scope.row['edit']"
-                  @click="deleteTable(scope.$index)">删除</el-button>
+                  @click="deleteTable(scope.row)">删除</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope)">保存</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="cancleEditTable(scope.$index)">取消</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['save']" @click="addLabelTable(scope)">保存</el-button>
@@ -104,14 +104,21 @@ export default {
     /**
      * 删除表格数据
      */
-    deleteTable(index){
-      this.modalLoading = true;
-      deleteSongLabel().then(res=>{
-        this.modalLoading = false;
-        messageInfo.bind(this)('删除成功','success')
-      }).catch(res=>{
-        this.modalLoading =false;
-      })
+    deleteTable(row){
+      this.$confirm(`您确定要删除曲目${row.label_name}吗？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          this.modalLoading = true;
+          deleteSongLabel({id:row.id}).then(res=>{
+            this.modalLoading = false;
+            messageInfo.bind(this)('删除成功','success')
+          }).catch(res=>{
+            this.modalLoading =false;
+          })
+        })
+      
     },
 
     /**
@@ -145,8 +152,11 @@ export default {
         })
       }
     },
-    cancleAddLabelTable(){
-      this.tableData.pop();
+    cancleAddLabelTable(index){
+      // this.tableData.pop();
+      this.tableData.splice(index,1);
+      // console.log(this.tableData)
+      this.tableData = [...this.tableData];
     },
     addLabel(){
       let labelOb = {
@@ -175,10 +185,14 @@ export default {
 }
 .over-table-btn {
   margin: 10px;
+  
+}
+.pull-right{
   float: right;
 }
 .over-table {
   overflow: hidden;
+
 }
 .modal-label-box{
   max-height: 300px;
