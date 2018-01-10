@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<el-dialog title="新增产品" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
+		<el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
 			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
@@ -98,12 +98,14 @@ import {messageInfo} from "@/utils/common"
 						trigger: "blur"
 					}]
 				},
+				title:""
 			};
 		},
 		methods: {
 			getProductFormFun(){
 				console.log(this.type)
 				if(this.type==='edit'){
+					this.title = "编辑产品";
 					this.modalLoading = true;
 					getProductForm({id:this.id}).then(res=>{
 						console.log(res)
@@ -112,6 +114,8 @@ import {messageInfo} from "@/utils/common"
 						}).catch(res=>{
 							this.modalLoading = false;	
 						})
+				}else if(this.type==='add'){
+					this.title = "新增产品";
 				}
 				
 			},
@@ -142,7 +146,7 @@ import {messageInfo} from "@/utils/common"
 								messageInfo.bind(this)('更新失败','error')
 							})
 						}else if (this.type ==='add'){
-							AddProduct({id:this.id,...this.ruleForm}).then(res=>{
+							AddProduct({...this.ruleForm}).then(res=>{
 								this.loading = false;
 								this.dialogFormVisible();
 								messageInfo.bind(this)('添加成功','success')

@@ -6,7 +6,7 @@
             <el-button type="primary" size="mini" class="over-table-btn" @click="addLabel">新增</el-button>
           </div>
           <div class="modal-label-box">
-            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
+            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  border stripe>
               <el-table-column prop="label_name" label="标签名称" min-width="100">
                 <template slot-scope="scope">
                   <p v-show="!scope.row['edit']">
@@ -20,9 +20,9 @@
                   <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope.$index)">编辑</el-button>
                   <el-button type="text" size="mini" v-show="!scope.row['edit']"
                   @click="deleteTable(scope.row)">删除</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope)">保存</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope)" class="button-clear-left">保存</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="cancleEditTable(scope.$index)">取消</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="addLabelTable(scope)">保存</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="addLabelTable(scope)" style="margin-left:0" class="button-clear-left">保存</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['save']" @click="cancleAddLabelTable(scope.$index)">取消</el-button>
                 </template>
               </el-table-column>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import {getLabelList,uploadSongLabel,deleteSongLabel,addSongLabel} from '@/api/song/song';
+import {getLabelList,updateSongLabel,deleteSongLabel,addSongLabel} from '@/api/song/song';
 import {messageInfo} from "@/utils/common"
 export default {
   props: {
@@ -105,7 +105,7 @@ export default {
      * 删除表格数据
      */
     deleteTable(row){
-      this.$confirm(`您确定要删除曲目${row.label_name}吗？`, '提示', {
+      this.$confirm(`当前标签已被其他曲目引用，确定要删除？`, '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
@@ -127,7 +127,7 @@ export default {
     saveTable(scope){
       console.log(scope.row.label_name)
       this.modalLoading = true;
-      uploadSongLabel({id:scope.row.id,label_name:scope.row.label_name}).then(res=>{
+      updateSongLabel({id:scope.row.id,label_name:scope.row.label_name}).then(res=>{
         this.modalLoading = false;
         messageInfo.bind(this)('更新成功','success');
         this.getLabelListFun()
@@ -142,7 +142,7 @@ export default {
          messageInfo.bind(this)('标签内容不能为空','warn')
       }else{
         this.modalLoading = true;
-        addSongLabel().then(res=>{
+        addSongLabel({id:scope.row.id,label_name:scope.row.label_name}).then(res=>{
         this.modalLoading = false;
         messageInfo.bind(this)('添加成功','success');
         this.getLabelListFun();
@@ -184,8 +184,7 @@ export default {
   box-shadow: 0 0 4px #aaa;
 }
 .over-table-btn {
-  margin: 10px;
-  
+  margin: 10px 10px 10px 0px;;
 }
 .pull-right{
   float: right;
@@ -198,5 +197,6 @@ export default {
   max-height: 300px;
   overflow-y:auto 
 }
+
 </style>
 

@@ -1,9 +1,9 @@
 <template>
 <div class="modal">
-    <el-dialog title="新增曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongFormFun">
+    <el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongFormFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-              <el-form-item label="活动名称" prop="name">
+              <el-form-item label="曲子名称" prop="name">
                   <el-input v-model="ruleForm.name"></el-input>
               </el-form-item>
               <el-form-item label="标签" prop="label_list">
@@ -12,11 +12,11 @@
                       </el-option>
                   </el-select>
               </el-form-item>
-              <el-form-item label="上传音频文件" prop="upload">
+              <el-form-item label="上传音频文件" prop="upload_url">
                   <el-upload class="upload-demo" action=" https://easy-mock.com/mock/5a4f3088d344f80dfbed7c01/song/song/uploadAudio" :on-preview="handlePreview"
                   :on-success="handleSuccess"
                    :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList" >
-                      <el-input v-model="ruleForm.upload" style="display:none;"/>
+                      <el-input v-model="ruleForm.upload_url" style="display:none;"/>
                       <el-button size="small" type="primary">点击上传</el-button>
                       <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
                   </el-upload>
@@ -74,7 +74,7 @@ export default {
       ruleForm: {
         name:"",
         label_list:[],
-        upload:"",
+        upload_url:"",
         note:""
       },
       rules: {
@@ -89,43 +89,62 @@ export default {
 						message: "请选择标签",
 						trigger: "blur"
           }],
-          upload:[{
+          upload_url:[{
             required: true,
             message: "文件未上传",
           }]
         
       },
-      options: []
+      options: [],
+      labelList:[],
+      title:""
     };
   },
   methods: {
     getSongFormFun(){
       // console.log(11)
-      console.log(this.type)
       
       if(this.type==="edit"){
+        this.title="编辑曲子";
         this.modalLoading = true
-        getSongForm({id:this.id,...this.ruleForm}).then(res=>{  
+        getSongForm({id:this.id}).then(res=>{  
           this.ruleForm = res.data.form;
           this.modalLoading = false;
         }).catch(res=>{
           this.modalLoading = false;
         })
+      }else if(this.type==="add"){
+        this.title="新增曲子";
       }
+       searchSongSelectList().then(res=>{
+        this.labelList = [...res.data]
+        }).catch(res=>{
+
+      })
+
     },
 
     remoteMethod(query){
-      console.log(1)
-      searchSongSelectList().then(res=>{
-        console.log(res)
-        this.options = [...res.data]
-      }).catch(res=>{
-        console.log(res)
-      })
+      
+      // if(this.labelList.length==0)
+      
+      if (query !== '') {
+          this.selectLoading = true;
+          setTimeout(() => {
+            this.selectLoading = false;
+            this.options = this.labelList.filter(item => {
+              return item.label.toLowerCase()
+                .indexOf(query.toLowerCase()) > -1;
+            });
+          }, 200);
+        } else {
+          this.options = [];
+        }
+        // 
     },
     handleSuccess(res){
       console.log(res)
-      this.ruleForm.upload = res.data.audio_url;
+      this.ruleForm.upload_url = res.data.audio_url;
       console.log(this.ruleForm)
     },
     handleRemove(file, fileList) {
@@ -162,7 +181,7 @@ export default {
                 messageInfo.bind(this)('更新失败','error');
               })
           }else if(this.type ==='add'){
-            addSong({id:this.id,...this.releForm}).then(res=>{
+            addSong({...this.ruleForm}).then(res=>{
               this.loading = false;
               this.dialogFormVisible();
               messageInfo.bind(this)('添加成功','success')

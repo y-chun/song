@@ -2,43 +2,40 @@
   <div class="app-container">
     <div class="app-content">
       <div class="over-table">
-        <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn pull-right" size="mini">标签管理</el-button>
-        <el-button type="primary" icon="el-icon-edit" @click="addSongModalFun('add')" class="over-table-btn pull-right" size="mini">新增</el-button>
-        <el-button type="info" @click="loadTableList" class="over-table-btn pull-right" size="mini" plain>搜索</el-button>
-        <!-- <el-input v-model="input" placeholder="请输入曲子名称或标签" size="mini" class="over-table-input"></el-input> -->
-        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="mini" class="over-table-input">
-          <!-- <el-option v-for="item in options5" :key="item.value" :label="item.label" :value="item.value">
-          </el-option> -->
+        <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn pull-right" size="large">标签管理</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="addSongModalFun('add')" class="over-table-btn pull-right button-clear-left" size="large">新增</el-button>
+        <el-button type="info" @click="loadTableList" class="over-table-btn pull-right button-clear-left" size="large" plain>搜索</el-button>
+        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="large" class="over-table-input">
         </el-select>
       </div>
       <!--曲子列表-->
         <el-table :data="currentTableData" style="width: 100%"  v-loading.body="listLoading" border stripe>
-          <el-table-column prop="ID" label="ID" min-width="80">
+          <el-table-column prop="ID" label="ID" width="50">
           </el-table-column>
-          <el-table-column prop="name" label="名称" min-width="200">
+          <el-table-column prop="name" label="名称" min-width="150">
             <template slot-scope="scope">
+              <div>
 
-              <el-tag type="success" size="small" v-for="(item, index) in scope.row.label"  class="table-tag" :key="index">{{item}}</el-tag>
-              <!-- <svg height="90px" width="69px">
-               <use xmlns:xlink="http://www.w3.org/1999/xlink" :xlink:href="require('../../assets/svg/u448.svg')" height="90px" width="69px"></use>
-              </svg> -->
+                <img src="../../assets/images/play.png" @click="playAudio(scope)" v-show="!scope.row['play']" class="pull-left table-play-size"/>
+                <img src="../../assets/images/pause.png" @click="pauseAudio(scope)" v-show="scope.row['play']" class="pull-left table-play-size"/>
+                <p class="pull-left song-name">{{scope.row.name}}</p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="label" label="标签" min-width="200">
             <template slot-scope="scope">
-              <el-tag type="success" size="small" v-for="(item, index) in scope.row.label" class="table-tag" :key="index">{{item}}</el-tag>
+              <el-tag type="success" size="mini" v-for="(item, index) in scope.row.label" class="table-tag" :key="index">{{item}}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="citation_num" label="被使用次数" min-width="80" align="center">
+          <el-table-column prop="citation_num" label="被使用次数" min-width="60" align="center">
             <template slot-scope="scope">
-              <p class="song-citation-num" @click="clickCitation">
+              <p class="song-citation-num" @click="clickCitation(scope.row.id)">
                 {{scope.row.citation_num}}
               </p>
             </template>
           </el-table-column>
-          <el-table-column prop="operation" label="操作"  width="363">
+          <el-table-column prop="operation" label="操作"  width="300">
             <template slot-scope="scope">
-              <el-button @click="handleClick(scope.row)" type="primary" size="mini">试听</el-button>
               <el-button type="primary" size="mini" @click="openQuoteModal(scope.row.id)">引用</el-button>
               <el-button type="primary" size="mini" @click="addSongModalFun('edit',scope.row.id)">编辑</el-button>
               <el-button type="primary" size="mini" @click="checkNote(scope.row.id)">查看备注</el-button>
@@ -60,15 +57,15 @@
         </el-pagination>
       </div>
       <!--新增曲子弹窗-->
-      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addID"/>
+      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addId"/>
       <LabelManage v-model="labelManageState" @changeModalState="changeLabelManageState"/>
       <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
         <p>{{note}}</p>
       </InfoModal>
       <QuoteModal v-model="quoteModalState" @changeModalState="changeQuoteModalState" :albumList="albumList" :id="quoteId"/>
-      <CheckSongModal v-model="checkSongModalState" @changeModalState="changeCheckSongModalState" />  
+      <CheckSongModal v-model="checkSongModalState" @changeModalState="changeCheckSongModalState" :id="checkId"/>  
     </div>
-    <!-- <audio src="someaudio.wav" style="display:block"> -->
+    <audio src="someaudio.wav" style="display:block" ref="audio"/>
   </div>
 </template>
 
@@ -107,19 +104,10 @@ export default {
       sortMethod: data => data,
       limit:5,
       albumList:[],
-      options5:[{
-          value: 'HTML',
-          label: 'HTML'
-        }, {
-          value: 'CSS',
-          label: 'CSS'
-        }, {
-          value: 'JavaScript',
-          label: 'JavaScript'
-        }],
       search: [],
       quoteId:"",
-      addID:""
+      addId:"",
+      checkId:""
     };
   },
   mounted(){
@@ -140,10 +128,41 @@ export default {
   watch: {
       tableData() {
         // 切换数据来源，分页重置
-        this.currentPage = 1;
+        // this.currentPage = 1;
       }
     },
   methods: {
+    /**
+     * 播放音频
+     */
+    playAudio(scope){
+      this.$refs['audio'].src = scope.row.audio_url;
+      this.$refs['audio'].play();
+      var list = this.tableData.map((item,i)=>{
+        if(item.id===scope.row.id){
+          item['play'] = true;
+        }else{
+          item['play'] = false;
+        }
+        return item
+      })
+      this.tableData = list
+    },
+
+    /**
+     * 暂停音频
+     */
+    pauseAudio(scope){
+      this.$refs['audio'].pause();
+      var list = this.tableData.map((item,i)=>{
+        if(item.id===scope.row.id){
+          item['play'] = false;
+        }
+        return item
+      })
+      this.tableData = list
+    },
+
     /**
      * 打开查看备注
      */
@@ -158,27 +177,29 @@ export default {
       })
     },
 
+    /**
+     * 打开曲子编辑or添加曲子窗口
+     */
     addSongModalFun(type,id){
       this.addModalType=type;
-      !!id?this.addID = id:null
+      !!id?this.addId = id:null
       this.changeAddSongModalState(true);
     },
-    handleClick() {},
-    onCancel() {
-      this.$message({
-        message: "cancel!",
-        type: "warning"
-      });
-    },
+
+
     handleSizeChange(val) {
       this.limit = val;
       this.currentPage = 1;
     },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-    },
+
+    /**
+     * 加载table数据
+     */
+
     loadTableList(){
       this.listLoading = true;
+      this.currentPage = 1;
+      this.$refs['audio'].pause();
       getList({search:this.search}).then(res=>{
         this.listLoading = false;
         this.search = [];
@@ -249,7 +270,8 @@ export default {
       this.checkSongModalState = state;
     },
 
-    clickCitation(){
+    clickCitation(id){
+      this.checkId = id;
       this.changeCheckSongModalState(true)
     }
   }
@@ -270,7 +292,7 @@ export default {
   box-shadow: 0 0 4px #aaa;
 }
 .over-table-btn {
-  margin: 10px;
+  margin: 10px 10px 10px 0px;
 }
 .pull-right{
   float: right;
@@ -283,7 +305,7 @@ export default {
 }
 .over-table-input {
   margin: 10px;
-  width: 250px;
+  width: 350px;
   float: right;
 }
 .table-pagination {
@@ -295,6 +317,13 @@ export default {
 }
 .table-tag{
   margin-right:5px;
+}
+.song-name{
+  margin-left:5px;
+}
+.table-play-size{
+  width: 22px;
+  height: 22px;
 }
 </style>
 

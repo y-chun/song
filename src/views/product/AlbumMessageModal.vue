@@ -7,7 +7,7 @@
             class="over-table-btn" @click="addAlbum">新增</el-button>
           </div>
           <div class="modal-label-box">
-            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
+            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  border stripe>
               <el-table-column prop="album_name" label="专辑名称" min-width="80">
                 <template slot-scope="scope">
                   <p v-show="!scope.row['edit']">
@@ -22,10 +22,10 @@
                 <template slot-scope="scope">
                   <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope.$index)">编辑</el-button>
                   <el-button type="text" size="mini" v-show="!scope.row['edit']"
-                  @click="deleteTable(scope.$index)">删除</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope.$index)">保存</el-button>
+                  @click="deleteTable(scope.row)">删除</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope)" class="button-clear-left">保存</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="cancleEditTable(scope.$index)">取消</el-button>
-                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="addAlbumTable(scope)">保存</el-button>
+                  <el-button type="text" size="mini" v-show="scope.row['save']" @click="addAlbumTable(scope)" class="button-clear-left">保存</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['save']" @click="cancleAddAlbumTable(scope.$index)">取消</el-button>
                 </template>
               </el-table-column>
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {getAlbumList,uploadProductAlubm,deleteProductAlubm,addProductAlubm} from '@/api/song/product';
+import {getAlbumList,updateProductAlubm,deleteProductAlubm,addProductAlubm} from '@/api/song/product';
 import {messageInfo} from "@/utils/common"
 export default {
   props: {
@@ -95,7 +95,7 @@ export default {
          messageInfo.bind(this)('标签内容不能为空','warn')
       }else{
         this.modalLoading = true;
-        addProductAlubm().then(res=>{
+        addProductAlubm({id:scope.row.id,album_name:scope.row.album_name}).then(res=>{
         this.modalLoading = false;
         messageInfo.bind(this)('添加成功','success');
         this.getAlbumListFun();
@@ -131,24 +131,30 @@ export default {
     /**
      * 删除表格数据
      */
-    deleteTable(index){
-      this.modalLoading = true;
-      deleteProductAlubm().then(res=>{
-        this.modalLoading = false;
-        this.getAlbumListFun();
-        messageInfo.bind(this)('删除成功','success')
-      }).catch(res=>{
-        this.modalLoading = false;
-        messageInfo.bind(this)('删除失败','error')
+    deleteTable(row){
+      this.$confirm(`当前专辑已有产品，确定要删除？`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+          this.modalLoading = true;
+          deleteProductAlubm({id:row.id}).then(res=>{
+            this.modalLoading = false;
+            this.getAlbumListFun();
+            messageInfo.bind(this)('删除成功','success')
+          }).catch(res=>{
+            this.modalLoading = false;
+            messageInfo.bind(this)('删除失败','error')
+          })
       })
     },
 
     /**
      * 保存表格数据
      */
-    saveTable(index){
+    saveTable(scope){
       this.modalLoading = true;
-      uploadProductAlubm().then(res=>{
+      updateProductAlubm({id:scope.row.id,album_name:scope.row.album_name}).then(res=>{
         this.modalLoading = false;
         this.getAlbumListFun();
         messageInfo.bind(this)('更新成功','success')
@@ -156,7 +162,7 @@ export default {
         this.modalLoading = false;
          messageInfo.bind(this)('更新失败','error')
       })
-      this.cancleEditTable(index);//停止编辑
+      this.cancleEditTable(scope.$index);//停止编辑
     },
 
     addAlbum(){
@@ -186,7 +192,7 @@ export default {
   box-shadow: 0 0 4px #aaa;
 }
 .over-table-btn {
-  margin: 10px;
+  margin: 10px 10px 10px 0px;
 }
 .pull-right{
   float: right;
@@ -197,6 +203,9 @@ export default {
 .modal-label-box{
   max-height: 300px;
   overflow-y:auto 
+}
+.button-clear-left{
+  margin-left:0 !important;
 }
 </style>
 

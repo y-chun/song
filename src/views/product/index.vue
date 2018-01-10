@@ -2,15 +2,14 @@
   <div class="app-container">
     <div class="app-content">
       <div class="over-table">
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right" size="mini" @click="albumMessageModalState = true">专辑管理</el-button>
-        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right" size="mini" @click="addProduct('add')">新增</el-button>
-        <el-button type="info" class="over-table-btn pull-right" size="mini" plain @click="loadTableList">搜索</el-button>
-        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="mini" class="over-table-input">
-        </el-select>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right" size="large" @click="albumMessageModalState = true">专辑管理</el-button>
+        <el-button type="primary" icon="el-icon-edit" class="over-table-btn pull-right button-clear-left" size="large" @click="addProduct('add')">新增</el-button>
+        <el-button type="info" class="over-table-btn pull-right button-clear-left" size="large" plain @click="loadTableList">搜索</el-button>
+        <el-input v-model="search" placeholder="请输入曲子名称或标签" size="large" class="over-table-input" />
       </div>
       <div class="app-table-box">
         <el-table :data="currentTableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading" border stripe>
-          <el-table-column prop="ID" label="ID">
+          <el-table-column prop="ID" label="ID" width="50">
           </el-table-column>
           <el-table-column prop="name" label="产品名称">
           </el-table-column>
@@ -127,7 +126,7 @@ import {messageInfo} from "@/utils/common"
         this.listLoading = true;
         getProductList({search:this.search}).then(res=>{
           this.listLoading = false;
-          this.search = [];
+          this.search = "";
           this.tableData = [...res.data.tableData];
           this.albumList = [...res.data.album_list];
           this.songList = [...res.data.song_list];
@@ -195,7 +194,6 @@ import {messageInfo} from "@/utils/common"
     text-align: center;
   }
   .app-table-box {
-    border: 1px solid #eee;
     background-color: #fff;
   }
   .app-content {
@@ -204,7 +202,7 @@ import {messageInfo} from "@/utils/common"
     box-shadow: 0 0 4px #aaa;
   }
   .over-table-btn {
-    margin: 10px;
+    margin: 10px 10px 10px 0px;
   }
   .pull-right{
     float: right;
@@ -217,7 +215,7 @@ import {messageInfo} from "@/utils/common"
   }
   .over-table-input {
     margin: 10px;
-    width: 180px;
+    width: 350px;
     float: right;
   }
   .table-pagination {

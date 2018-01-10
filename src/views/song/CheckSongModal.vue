@@ -6,7 +6,7 @@
             <el-button type="primary" size="mini" >新增</el-button>
           </div> -->
           <div class="modal-label-box">
-            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  stripe>
+            <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  border stripe>
               <el-table-column prop="product_name" label="产品名称" min-width="80">
               </el-table-column>
             </el-table>
@@ -28,6 +28,10 @@ export default {
     	type: Boolean,
     	default: false
     },
+    id:{
+      type:String,
+      default:""
+    }
   },
   computed: {
     show: {
@@ -51,7 +55,7 @@ export default {
   methods: {
     getSongNumFun(){
       this.modalLoading = true;
-      getSongNum().then(res=>{
+      getSongNum({id:this.id}).then(res=>{
         this.tableData = res.data.tableData
         this.modalLoading = false;
       }).catch(res=>{
@@ -78,10 +82,6 @@ export default {
   background-color: #fff;
   padding: 15px;
   box-shadow: 0 0 4px #aaa;
-}
-.over-table-btn {
-  margin: 10px;
-  float: right;
 }
 .over-table {
   overflow: hidden;

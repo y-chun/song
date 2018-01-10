@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getProductList(data) {
   return request({
-    url: '/product/tableList',
+    url: '/Product/tableList',
     method: 'POST',
     data
   })
@@ -10,7 +10,7 @@ export function getProductList(data) {
 
 export function getProductNote(data) {
   return request({
-    url: '/product/viewNote',
+    url: '/Product/viewNote',
     method: 'POST',
     data
   })
@@ -18,7 +18,7 @@ export function getProductNote(data) {
 
 export function AddProduct(data) {
   return request({
-    url: '/product/addProduct',
+    url: '/Product/addProduct',
     method: 'POST',
     data
   })
@@ -26,7 +26,7 @@ export function AddProduct(data) {
 
 export function editProduct(data) {
   return request({
-    url: '/product/editProduct',
+    url: '/Product/editProduct',
     method: 'POST',
     data
   })
@@ -34,32 +34,32 @@ export function editProduct(data) {
 
 export function deleteProduct(data) {
   return request({
-    url: '/product/delete',
+    url: '/Product/delete',
     method: 'POST',
     data
   })
 }
 
-export function getAlbumList(data) {
+export function getAlbumList(params) {
   return request({
-    url: '/product/AlbumList',
-    method: 'POST',
-    data
+    url: '/Product/AlbumList',
+    method: 'GET',
+    params
   })
 }    
 
 
 export function getProductForm(data) {
   return request({
-    url: '/product/productForm',
+    url: '/Product/productForm',
     method: 'POST',
     data
   })
 }
 
-export function uploadProductAlubm(data) {
+export function updateProductAlubm(data) {
   return request({
-    url: '/product/uploadAlubm',
+    url: '/Product/updateAlubm',
     method: 'POST',
     data
   })
@@ -67,7 +67,7 @@ export function uploadProductAlubm(data) {
 
 export function deleteProductAlubm(data) {
   return request({
-    url: '/product/deleteAlubm',
+    url: '/Product/deleteAlubm',
     method: 'POST',
     data
   })
@@ -75,7 +75,7 @@ export function deleteProductAlubm(data) {
 
 export function addProductAlubm(data) {
   return request({
-    url: '/product/addAlubm',
+    url: '/Product/addAlubm',
     method: 'POST',
     data
   })
