@@ -1,19 +1,19 @@
 <template>
 	<div >
-		<el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
+		<el-dialog title="新增产品" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
 			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
 					<el-input v-model="ruleForm.name"></el-input>
 				</el-form-item>
 				<el-form-item label="归属专辑" prop="album">
-					<el-select v-model="ruleForm.album" placeholder="请选择" size="large">
+					<el-select v-model="ruleForm.album" filterable placeholder="请选择" size="large">
 						<el-option v-for="item in albumList" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item label="引用曲子" prop="quote">
-					<el-select v-model="ruleForm.quote" placeholder="请选择">
+					<el-select v-model="ruleForm.quote" filterable placeholder="请选择">
 						<el-option v-for="item in songList" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
 					</el-select>
@@ -98,31 +98,42 @@ import {messageInfo} from "@/utils/common"
 						trigger: "blur"
 					}]
 				},
-				title:""
 			};
 		},
 		methods: {
 			/**
-			 * 获取表单默认值
+			 * 加载编辑时表单默认数据
 			 */
 			getProductFormFun(){
+				console.log(this.type)
 				if(this.type==='edit'){
-					this.title = "编辑产品";
 					this.modalLoading = true;
 					getProductForm({id:this.id}).then(res=>{
+						console.log(res)
 						this.ruleForm = res.data.form;
 						this.modalLoading = false;
 						}).catch(res=>{
 							this.modalLoading = false;	
 						})
-				}else if(this.type==='add'){
-					this.title = "新增产品";
 				}
 				
 			},
 
+			// handleRemove(file, fileList) {
+			// 	console.log(file, fileList);
+			// },
+			// handlePreview(file) {
+			// 	console.log(file);
+			// },
+			// handleExceed(files, fileList) {
+
+			// },
+			// beforeRemove(file, fileList) {
+			// 	return this.$confirm(`确定移除 ${file.name}？`);
+			// },
+
 			/**
-			 * 保存表单数据
+			 * 提交表单
 			 */
 			DialogSure() {
 				this.$refs['ruleForm'].validate(valid=>{
@@ -138,7 +149,7 @@ import {messageInfo} from "@/utils/common"
 								messageInfo.bind(this)('更新失败','error')
 							})
 						}else if (this.type ==='add'){
-							AddProduct({...this.ruleForm}).then(res=>{
+							AddProduct({id:this.id,...this.ruleForm}).then(res=>{
 								this.loading = false;
 								this.dialogFormVisible();
 								messageInfo.bind(this)('添加成功','success')
@@ -149,12 +160,10 @@ import {messageInfo} from "@/utils/common"
 						}
 					}
 				})
-				
-				
 			},
 
 			/**
-			 * 关闭弹窗并清除表单数据
+			 * 关闭弹出并清空表单
 			 */
 			dialogFormVisible() {
 				this.$refs['ruleForm'].resetFields();

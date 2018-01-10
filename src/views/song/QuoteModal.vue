@@ -10,7 +10,7 @@
 						<el-input v-model="ruleForm.planner"></el-input>
 					</el-form-item>
 					<el-form-item label="归属专辑" prop="album">
-						<el-select v-model="ruleForm.album" placeholder="请选择" size="large">
+						<el-select v-model="ruleForm.album" filterable  placeholder="请选择" size="large">
 							<el-option v-for="item in albumList" :key="item.value" :label="item.label" :value="item.value">
 							</el-option>
 					</el-select>

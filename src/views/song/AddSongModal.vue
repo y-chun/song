@@ -116,12 +116,11 @@ export default {
       }else if(this.type==="add"){
         this.title="新增曲子";
       }
-       searchSongSelectList().then(res=>{
+      searchSongSelectList().then(res=>{
         this.labelList = [...res.data]
         }).catch(res=>{
 
       })
-
     },
     
     /**
