@@ -102,13 +102,14 @@ import {messageInfo} from "@/utils/common"
 			};
 		},
 		methods: {
+			/**
+			 * 获取表单默认值
+			 */
 			getProductFormFun(){
-				console.log(this.type)
 				if(this.type==='edit'){
 					this.title = "编辑产品";
 					this.modalLoading = true;
 					getProductForm({id:this.id}).then(res=>{
-						console.log(res)
 						this.ruleForm = res.data.form;
 						this.modalLoading = false;
 						}).catch(res=>{
@@ -120,18 +121,9 @@ import {messageInfo} from "@/utils/common"
 				
 			},
 
-			handleRemove(file, fileList) {
-				console.log(file, fileList);
-			},
-			handlePreview(file) {
-				console.log(file);
-			},
-			handleExceed(files, fileList) {
-
-			},
-			beforeRemove(file, fileList) {
-				return this.$confirm(`确定移除 ${file.name}？`);
-			},
+			/**
+			 * 保存表单数据
+			 */
 			DialogSure() {
 				this.$refs['ruleForm'].validate(valid=>{
 					if(valid){
@@ -160,6 +152,10 @@ import {messageInfo} from "@/utils/common"
 				
 				
 			},
+
+			/**
+			 * 关闭弹窗并清除表单数据
+			 */
 			dialogFormVisible() {
 				this.$refs['ruleForm'].resetFields();
 				this.$emit("changeModalState", false);

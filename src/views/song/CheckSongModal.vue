@@ -14,7 +14,6 @@
         </div>
         <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible">取 消</el-button>
-            <el-button type="primary" @click="songDialogSure">确 定</el-button>
         </div>
     </el-dialog>
 </div>
@@ -53,6 +52,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * 获取列表
+     */
     getSongNumFun(){
       this.modalLoading = true;
       getSongNum({id:this.id}).then(res=>{
@@ -62,7 +64,10 @@ export default {
         this.modalLoading = false;
       })
     },
-    songDialogSure(){},
+
+    /**
+     * 关闭弹窗
+     */
     dialogFormVisible() {
       this.$emit("changeModalState", false);
     },

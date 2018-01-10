@@ -85,12 +85,17 @@ export default {
       })
     },
 
-    songDialogSure(){},
+    /**
+     * 关闭弹窗
+     */
     dialogFormVisible() {
       this.$emit("changeModalState", false);
     },
+
+    /**
+     * 上传添加专辑
+     */
     addAlbumTable(scope){
-      console.log(scope)
       if(scope.row.album_name.length==0){
          messageInfo.bind(this)('标签内容不能为空','warn')
       }else{
@@ -106,6 +111,9 @@ export default {
       }
     },
 
+    /**
+     * 取消添加专辑列表
+     */
     cancleAddAlbumTable(index){
       this.tableData.splice(index,1);
       console.log(this.tableData)
@@ -165,6 +173,9 @@ export default {
       this.cancleEditTable(scope.$index);//停止编辑
     },
 
+    /**
+     * 添加专辑
+     */
     addAlbum(){
       let albumOb = {
         "album_name": "",

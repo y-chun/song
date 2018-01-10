@@ -80,7 +80,9 @@ export default {
       })
     },
 
-    songDialogSure(){},
+    /**
+     * 关闭弹窗
+     */
     dialogFormVisible() {
       this.$emit("changeModalState", false);
     },
@@ -137,6 +139,10 @@ export default {
       })
       this.cancleEditTable(scope.$index);//停止编辑
     },
+
+    /**
+     * 提交新增标签
+     */
     addLabelTable(scope){
       if(scope.row.label_name.length==0){
          messageInfo.bind(this)('标签内容不能为空','warn')
@@ -152,12 +158,18 @@ export default {
         })
       }
     },
+  
+    /**
+     * 取消新增标签
+     */
     cancleAddLabelTable(index){
-      // this.tableData.pop();
       this.tableData.splice(index,1);
-      // console.log(this.tableData)
       this.tableData = [...this.tableData];
     },
+
+    /**
+     * 新增标签
+     */
     addLabel(){
       let labelOb = {
         "label_name":"",

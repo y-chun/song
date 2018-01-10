@@ -31,7 +31,6 @@
       <div class="table-pagination">
         <el-pagination
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
           :page-sizes="pageSizes"
           :page-size="limit"
@@ -122,6 +121,10 @@ import {messageInfo} from "@/utils/common"
           this.infoLoading = false;
         })
       },
+
+      /**
+       * 加载表格数据
+       */
       loadTableList(){
         this.listLoading = true;
         getProductList({search:this.search}).then(res=>{
@@ -133,21 +136,9 @@ import {messageInfo} from "@/utils/common"
         })
       },
 
-      songDialogSure() {
-      },
-      cellClick(e, c, cell, event) {
-        console.log(c);
-      },
-
-      onCancel() {
-       messageInfo.bind(this)('取消','success')
-      },
       handleSizeChange(val) {
         this.limit = val;
         this.currentPage = 1;
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
       },
 
       /**

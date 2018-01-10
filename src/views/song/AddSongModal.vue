@@ -13,9 +13,9 @@
                   </el-select>
               </el-form-item>
               <el-form-item label="上传音频文件" prop="upload_url">
-                  <el-upload class="upload-demo" action=" https://easy-mock.com/mock/5a4f3088d344f80dfbed7c01/song/song/uploadAudio" :on-preview="handlePreview"
+                  <el-upload class="upload-demo" action=" https://easy-mock.com/mock/5a4f3088d344f80dfbed7c01/song/song/uploadAudio"
                   :on-success="handleSuccess"
-                   :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed" :file-list="fileList" >
+                  :limit="3" :file-list="fileList" >
                       <el-input v-model="ruleForm.upload_url" style="display:none;"/>
                       <el-button size="small" type="primary">点击上传</el-button>
                       <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
@@ -69,7 +69,6 @@ export default {
       loading:false,
       modalLoading:false,
       selectLoading:false,
-      value9:[],
       fileList: [],
       ruleForm: {
         name:"",
@@ -101,9 +100,10 @@ export default {
     };
   },
   methods: {
+    /**
+     * 获取表单默认数据与标签列表
+     */
     getSongFormFun(){
-      // console.log(11)
-      
       if(this.type==="edit"){
         this.title="编辑曲子";
         this.modalLoading = true
@@ -123,11 +123,12 @@ export default {
       })
 
     },
-
-    remoteMethod(query){
-      
+    
+    /**
+     * 表单列表选择函数
+     */
+    remoteMethod(query){ 
       // if(this.labelList.length==0)
-      
       if (query !== '') {
           this.selectLoading = true;
           setTimeout(() => {
@@ -142,31 +143,17 @@ export default {
         }
         // 
     },
+
+    /**
+     * 音频文件上传成功处理函数
+     */
     handleSuccess(res){
-      console.log(res)
       this.ruleForm.upload_url = res.data.audio_url;
-      console.log(this.ruleForm)
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
-    },
-    cancelDialog(){
-      // this.ruleForm = {};
-      
-      // this.dialogFormVisible();
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length +
-          fileList.length} 个文件`
-      );
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
-    },
+
+    /**
+     * 提交表单数据
+     */
     songDialogSure() {
       this.$refs['ruleForm'].validate(valid=>{
         if(valid){
@@ -194,6 +181,10 @@ export default {
       })
       
     },
+
+    /**
+     * 关闭弹窗并清除表单数据
+     */
     dialogFormVisible() {
       console.log(111);
       this.$refs['ruleForm'].resetFields();

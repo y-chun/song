@@ -86,6 +86,10 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			};
 		},
 		methods: {
+
+			/**
+			 * 获取标签管理列表
+			 */
 			getQuoteContentFun(){
 				this.modalLoading = true;
 				getQuoteContent({id:this.id}).then(res=>{
@@ -95,24 +99,12 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 					this.modalLoading = false;
 				})
 			},
-			handleRemove(file, fileList) {
-				console.log(file, fileList);
-			},
-			handlePreview(file) {
-				console.log(file);
-			},
-			cancelDialog(){
-				
-				this.dialogFormVisible();
-    		},
-			handleExceed(files, fileList) {
 
-			},
-			beforeRemove(file, fileList) {
-			},
+			/**
+			 * 提交表单
+			 */
 			DialogSure() {
 				this.loading = true;
-				console.log(this.ruleForm)
 				this.$refs['ruleForm'].validate(valid=>{
 					if(valid){
 						putQuoteSong({id:this.id,...this.ruleForm}).then(res=>{
@@ -125,6 +117,10 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				})
 				
 			},
+
+			/**
+			 * 关闭弹窗，并清空表单
+			 */
 			dialogFormVisible() {
 				this.$refs['ruleForm'].resetFields();
 				this.$emit("changeModalState", false);
