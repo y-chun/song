@@ -6,6 +6,9 @@
 				<el-form-item label="产品名称" prop="name">
 					<el-input v-model="ruleForm.name"></el-input>
 				</el-form-item>
+				<el-form-item label="策划人" prop="planner">
+						<el-input v-model="ruleForm.planner"></el-input>
+				</el-form-item>
 				<el-form-item label="归属专辑" prop="album">
 					<el-select v-model="ruleForm.album" filterable placeholder="请选择" size="large">
 						<el-option v-for="item in albumList" :key="item.value" :label="item.label" :value="item.value">
@@ -65,7 +68,7 @@ import {messageInfo} from "@/utils/common"
 				},
 				// setter
 				set(newValue) {
-					this.$emit("input", newValue);
+					this.$emit('input', newValue);
 				}
 			}
 		},
@@ -76,27 +79,33 @@ import {messageInfo} from "@/utils/common"
 				value9: [],
 				fileList: [],
 				ruleForm: {
-					name: "",
+					name: '',
 					album:[],
-					quote:"",
-					note:""
+					planner:'',
+					quote:'',
+					note:''
 				},
 				rules: {
 					name: [{
 						required: true,
-						message: "请输入曲子名称",
-						trigger: "blur"
+						message: '请输入曲子名称',
+						trigger: 'blur'
 					}],
 					quote: [{
 						required: true,
-						message: "请选择曲子",
-						trigger: "blur"
+						message: '请选择曲子',
+						trigger: 'blur'
 					}],
 					album: [{
 						required: true,
-						message: "请选择专辑",
-						trigger: "blur"
-					}]
+						message: '请选择专辑',
+						trigger: 'blur'
+					}],
+					planner: [{
+						required: true,
+						message: '请输入策划人',
+						trigger: 'blur'
+					}],
 				},
 			};
 		},
@@ -136,14 +145,14 @@ import {messageInfo} from "@/utils/common"
 			 * 提交表单
 			 */
 			DialogSure() {
-				this.$refs['ruleForm'].validate(valid=>{
+				this.$refs.ruleForm.validate(valid=>{
 					if(valid){
 						this.loading = true;
 						if(this.type==='edit'){
 							editProduct({id:this.id,...this.ruleForm}).then(res=>{
 								this.loading = false;
 								messageInfo.bind(this)('更新成功','success')
-								this.dialogFormVisible();
+								this.dialogFormVisible(true);
 							}).catch(res=>{
 								this.loading = false;
 								messageInfo.bind(this)('更新失败','error')
@@ -151,7 +160,7 @@ import {messageInfo} from "@/utils/common"
 						}else if (this.type ==='add'){
 							AddProduct({id:this.id,...this.ruleForm}).then(res=>{
 								this.loading = false;
-								this.dialogFormVisible();
+								this.dialogFormVisible(true);
 								messageInfo.bind(this)('添加成功','success')
 							}).catch(res=>{
 								this.loading = false;
@@ -165,9 +174,14 @@ import {messageInfo} from "@/utils/common"
 			/**
 			 * 关闭弹出并清空表单
 			 */
-			dialogFormVisible() {
+			dialogFormVisible(load) {
 				this.$refs['ruleForm'].resetFields();
-				this.$emit("changeModalState", false);
+				if(load){
+					this.$emit('changeModalState', false,true);
+				}else{
+					this.$emit('changeModalState', false);
+				}
+				
 			}
 		}
 	};

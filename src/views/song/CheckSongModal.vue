@@ -29,7 +29,7 @@ export default {
     },
     id:{
       type:String,
-      default:""
+      default:''
     }
   },
   computed: {
@@ -40,7 +40,7 @@ export default {
       },
       // setter
       set(newValue) {
-        this.$emit("input", newValue);
+        this.$emit('input', newValue);
       }
     }
   },
@@ -69,7 +69,7 @@ export default {
      * 关闭弹窗
      */
     dialogFormVisible() {
-      this.$emit("changeModalState", false);
+      this.$emit('changeModalState', false);
     },
   }
 };

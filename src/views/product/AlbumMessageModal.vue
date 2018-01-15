@@ -6,7 +6,7 @@
             <el-button type="primary" size="mini" 
             class="over-table-btn" @click="addAlbum">新增</el-button>
           </div>
-          <div class="modal-label-box">
+          <div class="modal-label-box" ref="tableBox">
             <el-table :data="tableData" style="width: 100%" v-loading.body="listLoading"  border stripe>
               <el-table-column prop="album_name" label="专辑名称" min-width="80">
                 <template slot-scope="scope">
@@ -20,7 +20,7 @@
               </el-table-column>
               <el-table-column prop="operation" label="操作" min-width="200">
                 <template slot-scope="scope">
-                  <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope.$index)">编辑</el-button>
+                  <el-button type="text" size="mini" v-show="!scope.row['edit']" @click="editTable(scope)">编辑</el-button>
                   <el-button type="text" size="mini" v-show="!scope.row['edit']"
                   @click="deleteTable(scope.row)">删除</el-button>
                   <el-button type="text" size="mini" v-show="scope.row['edit']&&!scope.row['save']" @click="saveTable(scope)" class="button-clear-left">保存</el-button>
@@ -58,8 +58,7 @@ export default {
       },
       // setter
       set(newValue) {
-          console.log(newValue)
-        this.$emit("input", newValue);
+        this.$emit('input', newValue);
       }
     }
   },
@@ -67,7 +66,8 @@ export default {
     return {
       modalLoading:false,
       listLoading:false,
-      tableData: []
+      tableData: [],
+      editText:'',
     };
   },
   methods: {
@@ -89,14 +89,14 @@ export default {
      * 关闭弹窗
      */
     dialogFormVisible() {
-      this.$emit("changeModalState", false);
+      this.$emit('changeModalState', false);
     },
 
     /**
      * 上传添加专辑
      */
     addAlbumTable(scope){
-      if(scope.row.album_name.length==0){
+      if(scope.row.album_name.trim().length==0){
          messageInfo.bind(this)('标签内容不能为空','warn')
       }else{
         this.modalLoading = true;
@@ -123,8 +123,9 @@ export default {
     /**
      * 编辑表格
      */
-    editTable(index){
-      this.tableData[index].edit = true;
+    editTable(scope){
+      this.tableData[scope.$index]['editText'] = scope.row.album_name;
+      this.tableData[scope.$index].edit = true;
       this.tableData = [...this.tableData]
     },
 
@@ -133,6 +134,7 @@ export default {
      */
     cancleEditTable(index){
       this.tableData[index].edit = false;
+      this.tableData[index].album_name = this.tableData[index].editText;
       this.tableData = [...this.tableData]
     },
 
@@ -161,27 +163,33 @@ export default {
      * 保存表格数据
      */
     saveTable(scope){
-      this.modalLoading = true;
-      updateProductAlubm({id:scope.row.id,album_name:scope.row.album_name}).then(res=>{
-        this.modalLoading = false;
-        this.getAlbumListFun();
-        messageInfo.bind(this)('更新成功','success')
-      }).catch(res=>{
-        this.modalLoading = false;
-         messageInfo.bind(this)('更新失败','error')
-      })
-      this.cancleEditTable(scope.$index);//停止编辑
+      if(scope.row.album_name.trim().length==0){
+         messageInfo.bind(this)('标签内容不能为空','warn')
+      }else{
+        this.modalLoading = true;
+        updateProductAlubm({id:scope.row.id,album_name:scope.row.album_name}).then(res=>{
+          this.modalLoading = false;
+          this.getAlbumListFun();
+          messageInfo.bind(this)('更新成功','success')
+        }).catch(res=>{
+          this.modalLoading = false;
+          messageInfo.bind(this)('更新失败','error')
+        })
+        this.cancleEditTable(scope.$index);//停止编辑
+      }
     },
 
     /**
      * 添加专辑
      */
     addAlbum(){
+      let tableBox = this.$refs.tableBox;
+      tableBox.scrollTop = tableBox.scrollHeight;
       let albumOb = {
-        "album_name": "",
-        "product_num": "",
-        "edit":true,
-        "save":true
+        album_name: '',
+        product_num: '',
+        edit:true,
+        save:true
       }
       this.tableData.push(albumOb)
     }

@@ -14,7 +14,7 @@
 
 <script>
 export default {
-  name:"InfoModal",
+  // name:'InfoModal',
   props: {
       value: {
     	type: Boolean,
@@ -22,7 +22,7 @@ export default {
     },
     title:{
         type:String,
-        default:"信息窗口"
+        default:'信息窗口'
     },
     modalLoading:{
         type:Boolean,
@@ -37,25 +37,19 @@ export default {
       },
       // setter
       set(newValue) {
-        this.$emit("input", newValue);
+        this.$emit('input', newValue);
       }
     }
   },
   data() {
     return {
       listLoading:false,
-      tableData: [
-        {
-          labelName: "1",
-          operation: "王小虎",
-        },
-      ]
     };
   },
   methods: {
     songDialogSure(){},
     dialogFormVisible() {
-      this.$emit("changeModalState", false);
+      this.$emit('changeModalState', false);
     }
   }
 };

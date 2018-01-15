@@ -47,7 +47,6 @@
       <div class="table-pagination">
         <el-pagination
           @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
           :current-page.sync="currentPage"
           :page-sizes="pageSizes"
           :page-size="limit"
@@ -57,15 +56,15 @@
         </el-pagination>
       </div>
       <!--新增曲子弹窗-->
-      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addId"/>
+      <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addID"/>
       <LabelManage v-model="labelManageState" @changeModalState="changeLabelManageState"/>
       <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
         <p>{{note}}</p>
       </InfoModal>
-      <QuoteModal v-model="quoteModalState" @changeModalState="changeQuoteModalState" :albumList="albumList" :id="quoteId"/>
-      <CheckSongModal v-model="checkSongModalState" @changeModalState="changeCheckSongModalState" :id="checkId"/>  
+      <QuoteModal v-model="quoteModalState" @changeModalState="changeQuoteModalState" :albumList="albumList" :id="quoteID"/>
+      <CheckSongModal v-model="checkSongModalState" @changeModalState="changeCheckSongModalState" :id="checkID"/>  
     </div>
-    <audio src="someaudio.wav" style="display:block" ref="audio"/>
+    <audio src="" style="display:block" ref="audio"/>
   </div>
 </template>
 
@@ -87,9 +86,9 @@ export default {
   },
   data() {
     return {
-      input: "",
+      input: '',
       fileList: [],
-      note:"",
+      note:'',
       infoLoading:false,
       listLoading: false,
       addSongState: false,
@@ -97,7 +96,7 @@ export default {
       quoteModalState:false,
       labelManageState:false,
       checkSongModalState:false,
-      addModalType:"add",
+      addModalType:'add',
       tableData:[],
       currentPage: 1,
       pageSizes:[5, 10, 20],
@@ -105,9 +104,9 @@ export default {
       limit:5,
       albumList:[],
       search: [],
-      quoteId:"",
-      addId:"",
-      checkId:""
+      quoteID:'',
+      addID:'',
+      checkID:''
     };
   },
   mounted(){
@@ -182,7 +181,7 @@ export default {
      */
     addSongModalFun(type,id){
       this.addModalType=type;
-      !!id?this.addId = id:null
+      !!id?this.addID = id:null
       this.changeAddSongModalState(true);
     },
 
@@ -231,15 +230,18 @@ export default {
      * 打开引用窗口
      */
     openQuoteModal(id){
-      this.quoteId = id;
+      this.quoteID = id;
       this.changeQuoteModalState(true);
     },
 
     /**
      * 修改新增歌曲窗口状态
      */
-    changeAddSongModalState(state){
+    changeAddSongModalState(state,load){
       this.addSongState = state;
+      if(load){
+        this.loadTableList()
+      }
     },
 
     /**
@@ -271,7 +273,7 @@ export default {
     },
 
     clickCitation(id){
-      this.checkId = id;
+      this.checkID = id;
       this.changeCheckSongModalState(true)
     }
   }

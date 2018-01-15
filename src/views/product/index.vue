@@ -8,7 +8,7 @@
         <el-input v-model="search" placeholder="请输入曲子名称或标签" size="large" class="over-table-input" />
       </div>
       <div class="app-table-box">
-        <el-table :data="currentTableData" style="width: 100%" @cell-click="cellClick" v-loading.body="listLoading" border stripe>
+        <el-table :data="currentTableData" style="width: 100%"  v-loading.body="listLoading" border stripe>
           <el-table-column prop="ID" label="ID" width="50">
           </el-table-column>
           <el-table-column prop="name" label="产品名称">
@@ -66,11 +66,11 @@ import {messageInfo} from "@/utils/common"
         infoModalState:false,
         addProductModalState:false,
         albumMessageModalState:false,
-        input:"",
-        addModalType:"add",
+        input:'',
+        addModalType:'add',
         dialogFormVisible: false,
         listLoading: true,
-        note:"",
+        note:'',
         tableData: [],
         currentPage: 1,
         pageSizes:[5, 10, 20],
@@ -78,8 +78,8 @@ import {messageInfo} from "@/utils/common"
         limit:5,
         albumList:[],
         songList:[],
-        search:"",
-        addID:"",
+        search:'',
+        addID:'',
       };
     },
     mounted(){
@@ -129,7 +129,7 @@ import {messageInfo} from "@/utils/common"
         this.listLoading = true;
         getProductList({search:this.search}).then(res=>{
           this.listLoading = false;
-          this.search = "";
+          this.search = '';
           this.tableData = [...res.data.tableData];
           this.albumList = [...res.data.album_list];
           this.songList = [...res.data.song_list];
@@ -169,8 +169,11 @@ import {messageInfo} from "@/utils/common"
       /**
        * 修改新增窗口状态
        */
-      changeAddProductModalState(state){
+      changeAddProductModalState(state,load){
         this.addProductModalState = state;
+        if(load){
+          this.loadTableList()
+        }
       },
 
       changeAlbumMessageModalState(state){

@@ -42,7 +42,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			},
 			id:{
 				type:String,
-				default:""
+				default:''
 			}
 		},
 		computed: {
@@ -53,7 +53,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				},
 				// setter
 				set(newValue) {
-					this.$emit("input", newValue);
+					this.$emit('input', newValue);
 				}
 			}
 		},
@@ -64,23 +64,26 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				value9: [],
 				fileList: [],
 				ruleForm: {
-					name: ""
+					name: '',
+					planner:'',
+					album:'',
+					note:''
 				},
 				rules: {
 					name: [{
 						required: true,
-						message: "请输入曲子名称",
-						trigger: "blur"
+						message: '请输入曲子名称',
+						trigger: 'blur'
 					}],
 					planner: [{
 						required: true,
-						message: "请输入策划人",
-						trigger: "blur"
+						message: '请输入策划人',
+						trigger: 'blur'
 					}],
 					album: [{
 						required: true,
-						message: "请输入专辑名",
-						trigger: "blur"
+						message: '请输入专辑名',
+						trigger: 'blur'
 					}]
 				},
 			};
@@ -105,7 +108,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			 */
 			DialogSure() {
 				this.loading = true;
-				this.$refs['ruleForm'].validate(valid=>{
+				this.$refs.ruleForm.validate(valid=>{
 					if(valid){
 						putQuoteSong({id:this.id,...this.ruleForm}).then(res=>{
 							this.loading = false;
@@ -123,7 +126,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			 */
 			dialogFormVisible() {
 				this.$refs['ruleForm'].resetFields();
-				this.$emit("changeModalState", false);
+				this.$emit('changeModalState', false);
 			}
 		}
 	};
