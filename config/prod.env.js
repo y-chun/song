@@ -1,5 +1,5 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  BASE_API: '"/audio_resource/index.php/Admin"',
+  BASE_API: '"/index.php/Admin"',
 }

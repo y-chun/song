@@ -1,6 +1,6 @@
 <template>
 	<div >
-		<el-dialog title="新增产品" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
+		<el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getProductFormFun">
 			<div v-loading="modalLoading" class="modal-ctx" >
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="产品名称" prop="name">
@@ -15,7 +15,17 @@
 						</el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="引用曲子" prop="quote">
+				<el-form-item label="上传音频文件" prop="upload_url">
+                  <el-upload class="upload-demo" :action="`${baseAPI}/Song/uploadAudio`" :file-list="fileList" :on-success="uploadSuccess" accept="audio/mp3">
+                      <el-input v-model="ruleForm.upload_url" style="display:none;"/>
+                      <el-button size="small" type="primary">点击上传</el-button>
+                      <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
+                       <!-- <div slot="tip" class="el-upload__tip" style="overflow:hidden"><p style="display:block;float:left;width:60px">上传路径：</p>
+                         <a :href="ruleForm.upload_url" target="_Blank" style="display:block;float:left;width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; ">{{ruleForm.upload_url}}</a>
+                      </div> -->
+                  </el-upload>
+              </el-form-item>
+				<el-form-item label="引用歌曲" prop="quote">
 					<el-select v-model="ruleForm.quote" filterable placeholder="请选择">
 						<el-option v-for="item in songList" :key="item.value" :label="item.label" :value="item.value">
 						</el-option>
@@ -83,17 +93,20 @@ import {messageInfo} from "@/utils/common"
 					album:[],
 					planner:'',
 					quote:'',
+					upload_url:'',
 					note:''
 				},
+				title:'',
+				baseAPI:'',
 				rules: {
 					name: [{
 						required: true,
-						message: '请输入曲子名称',
+						message: '请输入歌曲名称',
 						trigger: 'blur'
 					}],
 					quote: [{
 						required: true,
-						message: '请选择曲子',
+						message: '请选择歌曲',
 						trigger: 'blur'
 					}],
 					album: [{
@@ -106,24 +119,34 @@ import {messageInfo} from "@/utils/common"
 						message: '请输入策划人',
 						trigger: 'blur'
 					}],
+					upload_url:[{
+						required: true,
+						message: '文件未上传',
+					}]
 				},
 			};
 		},
 		methods: {
+			uploadSuccess(res,file){
+				this.fileList = [file];
+				this.ruleForm.upload_url = res.data.audio_url;		
+			},
 			/**
 			 * 加载编辑时表单默认数据
 			 */
 			getProductFormFun(){
-				console.log(this.type)
+				this.baseAPI = process.env.BASE_API;
 				if(this.type==='edit'){
 					this.modalLoading = true;
+					this.title='编辑产品';
 					getProductForm({id:this.id}).then(res=>{
-						console.log(res)
 						this.ruleForm = res.data.form;
 						this.modalLoading = false;
 						}).catch(res=>{
 							this.modalLoading = false;	
 						})
+				}else if(this.type==='add'){
+					this.title='新增产品';
 				}
 				
 			},

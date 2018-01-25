@@ -1,6 +1,6 @@
 <template>
 	<div class="modal">
-		<el-dialog title="引用曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" v-loading="true" @open="getQuoteContentFun">
+		<el-dialog title="引用歌曲" :visible.sync="show" @close="dialogFormVisible" width="40%" v-loading="true">
 			<div class="modal-ctx" v-loading="modalLoading">
 				<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 					<el-form-item label="产品名称" prop="name" >
@@ -30,6 +30,7 @@
 
 <script>
 import {putQuoteSong,getQuoteContent} from '@/api/song/song';
+import {messageInfo} from "@/utils/common";
 	export default {
 		props: {
 			value: {
@@ -72,7 +73,7 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 				rules: {
 					name: [{
 						required: true,
-						message: '请输入曲子名称',
+						message: '请输入歌曲名称',
 						trigger: 'blur'
 					}],
 					planner: [{
@@ -107,14 +108,17 @@ import {putQuoteSong,getQuoteContent} from '@/api/song/song';
 			 * 提交表单
 			 */
 			DialogSure() {
-				this.loading = true;
+			
 				this.$refs.ruleForm.validate(valid=>{
 					if(valid){
+						this.loading = true;
 						putQuoteSong({id:this.id,...this.ruleForm}).then(res=>{
 							this.loading = false;
 							this.dialogFormVisible();
+							messageInfo.bind(this)('添加成功','success');
 						}).catch(res=>{
 							this.loading = false;
+							messageInfo.bind(this)('添加失败','error');
 						})
 					}
 				})

@@ -1,6 +1,6 @@
 <template>
 <div class="modal">
-    <el-dialog title="查看曲子" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongNumFun">
+    <el-dialog title="查看歌曲" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongNumFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <!-- <div class="over-table">
             <el-button type="primary" size="mini" >新增</el-button>

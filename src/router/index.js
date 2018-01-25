@@ -79,7 +79,7 @@ export const constantRouterMap = [
         path: 'song',
         name: 'Song',
         component: _import('song/index'),
-        meta: { title: '曲子管理', icon: 'form' }
+        meta: { title: '歌曲管理', icon: 'form' }
       },
       {
         path: 'product',

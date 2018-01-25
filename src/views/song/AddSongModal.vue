@@ -3,7 +3,7 @@
     <el-dialog :title="title" :visible.sync="show" @close="dialogFormVisible" width="40%" @open="getSongFormFun">
         <div class="modal-ctx" v-loading="modalLoading">
           <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-              <el-form-item label="曲子名称" prop="name">
+              <el-form-item label="歌曲名称" prop="name">
                   <el-input v-model="ruleForm.name"></el-input>
               </el-form-item>
               <el-form-item label="标签" prop="label_list">
@@ -17,10 +17,9 @@
                       <el-input v-model="ruleForm.upload_url" style="display:none;"/>
                       <el-button size="small" type="primary">点击上传</el-button>
                       <div slot="tip" class="el-upload__tip">支持扩展名:mp3</div>
-                       <div slot="tip" class="el-upload__tip" style="overflow:hidden"><p style="display:block;float:left;width:60px">上传路径：</p>
+                       <!-- <div slot="tip" class="el-upload__tip" style="overflow:hidden"><p style="display:block;float:left;width:60px">上传路径：</p>
                          <a :href="ruleForm.upload_url" target="_Blank" style="display:block;float:left;width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; ">{{ruleForm.upload_url}}</a>
-                           
-                         </div>
+                      </div> -->
                   </el-upload>
               </el-form-item>
              
@@ -83,7 +82,7 @@ export default {
         name: [
           {
             required: true,
-            message: '请输入曲子名称',
+            message: '请输入歌曲名称',
             trigger: 'blur'
           }],
           label_list: [{
@@ -100,7 +99,7 @@ export default {
       options: [],
       labelList:[],
       title:'',
-      baseAPI:""
+      baseAPI:''
     };
   },
   methods: {
@@ -118,7 +117,7 @@ export default {
     getSongFormFun(){
       this.baseAPI = process.env.BASE_API;
       if(this.type==='edit'){
-        this.title='编辑曲子';
+        this.title='编辑歌曲';
         this.modalLoading = true
         getSongForm({id:this.id}).then(res=>{  
           this.ruleForm = res.data.form;
@@ -127,7 +126,7 @@ export default {
           this.modalLoading = false;
         })
       }else if(this.type==='add'){
-        this.title='新增曲子';
+        this.title='新增歌曲';
       }
       searchSongSelectList().then(res=>{
         this.labelList = [...res.data]
@@ -175,7 +174,6 @@ export default {
               messageInfo.bind(this)('更新成功','success');
               this.dialogFormVisible(true);
             }).catch(res=>{
-              console.log(111)
                 this.loading = false;
                 messageInfo.bind(this)('更新失败','error');
               })
@@ -183,10 +181,10 @@ export default {
             addSong({...this.ruleForm}).then(res=>{
               this.loading = false;
               this.dialogFormVisible(true);
-              messageInfo.bind(this)('添加成功','success')
+              messageInfo.bind(this)('添加成功','success');
             }).catch(res=>{
               this.loading = false;
-              messageInfo.bind(this)('添加失败','error')
+              messageInfo.bind(this)('添加失败','error');
               })
           }
         }

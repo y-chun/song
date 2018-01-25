@@ -71,6 +71,9 @@ export default {
   background-image:linear-gradient(to right, #295BDB, #399CFF);
   height:50px;
   width:100%;
+  position: fixed;
+  top: 0;
+  z-index: 10;
 }
 .main-title{
   line-height:50px;

@@ -5,17 +5,16 @@
         <el-button type="primary" icon="el-icon-edit" @click="labelManageState = true" class="over-table-btn pull-right" size="large">标签管理</el-button>
         <el-button type="primary" icon="el-icon-edit" @click="addSongModalFun('add')" class="over-table-btn pull-right button-clear-left" size="large">新增</el-button>
         <el-button type="info" @click="loadTableList" class="over-table-btn pull-right button-clear-left" size="large" plain>搜索</el-button>
-        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入曲子名称或标签" size="large" class="over-table-input">
+        <el-select v-model="search" multiple filterable allow-create default-first-option placeholder="请输入歌曲名称或标签" size="large" class="over-table-input">
         </el-select>
       </div>
       <!--曲子列表-->
         <el-table :data="currentTableData" style="width: 100%"  v-loading.body="listLoading" border stripe>
           <el-table-column prop="ID" label="ID" width="50">
           </el-table-column>
-          <el-table-column prop="name" label="名称" min-width="150">
+          <el-table-column prop="name" label="名称" min-width="200">
             <template slot-scope="scope">
               <div>
-
                 <img src="../../assets/images/play.png" @click="playAudio(scope)" v-show="!scope.row['play']" class="pull-left table-play-size"/>
                 <img src="../../assets/images/pause.png" @click="pauseAudio(scope)" v-show="scope.row['play']" class="pull-left table-play-size"/>
                 <p class="pull-left song-name">{{scope.row.name}}</p>
@@ -59,7 +58,7 @@
       <AddSongModal v-model="addSongState" @changeModalState="changeAddSongModalState" :type="addModalType" :id="addID"/>
       <LabelManage v-model="labelManageState" @changeModalState="changeLabelManageState"/>
       <InfoModal v-model="infoModalState" @changeModalState="changeInfoState" :modalLoading="infoLoading">
-        <p>{{note}}</p>
+        <p v-html="note"></p>
       </InfoModal>
       <QuoteModal v-model="quoteModalState" @changeModalState="changeQuoteModalState" :albumList="albumList" :id="quoteID"/>
       <CheckSongModal v-model="checkSongModalState" @changeModalState="changeCheckSongModalState" :id="checkID"/>  
@@ -99,9 +98,9 @@ export default {
       addModalType:'add',
       tableData:[],
       currentPage: 1,
-      pageSizes:[5, 10, 20],
+      pageSizes:[10, 20,30],
       sortMethod: data => data,
-      limit:5,
+      limit:10,
       albumList:[],
       search: [],
       quoteID:'',
@@ -169,7 +168,8 @@ export default {
       this.changeInfoState(true);
       this.infoLoading = true;
       getNote({id:id}).then(res=>{
-        this.note = res.data.info;
+        let arrNote =   res.data.info.split("\n");
+        this.note = arrNote.join("</br>");
         this.infoLoading = false;
       }).catch(res=>{
         this.infoLoading = false;
@@ -201,7 +201,7 @@ export default {
       this.$refs['audio'].pause();
       getList({search:this.search}).then(res=>{
         this.listLoading = false;
-        this.search = [];
+        // this.search = [];
         this.tableData=[...res.data.tableData];
         this.albumList = [...res.data.album_list];
       })
@@ -240,7 +240,7 @@ export default {
     changeAddSongModalState(state,load){
       this.addSongState = state;
       if(load){
-        this.loadTableList()
+        this.loadTableList();
       }
     },
 
@@ -249,6 +249,7 @@ export default {
      */
     changeLabelManageState(state){
       this.labelManageState = state;
+      this.loadTableList()
     },
 
     /**
